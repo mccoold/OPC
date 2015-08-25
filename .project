@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<projectDescription>
+	<name>OPC</name>
+	<comment></comment>
+	<projects>
+		<project>knife-opc</project>
+		<project>opcrubyclient</project>
+	</projects>
+	<buildSpec>
+		<buildCommand>
+			<name>com.aptana.ide.core.unifiedBuilder</name>
+			<arguments>
+			</arguments>
+		</buildCommand>
+	</buildSpec>
+	<natures>
+		<nature>com.aptana.ruby.core.rubynature</nature>
+		<nature>com.aptana.projects.webnature</nature>
+	</natures>
+</projectDescription>
