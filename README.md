@@ -22,7 +22,7 @@ Install the opc_client gem, which depends on this gem,  that gem will give you a
 
 ### Class and Method Descriptions ###
 
-See [CLASSES_README](https://bitbucket.org/mcoold/opc/src/f449a05b412ec3bf401642cc333efbcdb4401ce5/CLASSES_README.md?at=master)
+See [CLASSES_README](https://github.com/mccoold/OPC/blob/master/CLASSES_README.md)
 
 ### Repo Owner ###
 
