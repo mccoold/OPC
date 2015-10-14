@@ -13,7 +13,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-class DataGrid < Jaas
+class DataGrid < Jcs
   def create(inst_id, id_domain, user, passwd)
     url = "https://jaas.oraclecloud.com/paas/service/jcs/api/v1.1/instances/#{id_domain}/#{inst_id}/clusters"
     uri = URI.parse(url)

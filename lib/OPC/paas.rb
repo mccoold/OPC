@@ -13,9 +13,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-class Dbaas < OPC
-  require 'OPC/Dbaas/dbservicelist'
-  require 'OPC/Dbaas/dbcreate'
-  require 'OPC/Dbaas/dbdelete'
-  require 'OPC/Dbaas/dbaasManager'
+class Paas < OPC
+  require 'opc/paas/jcs'
+  require 'opc/paas/instcreate'
+  require 'opc/paas/dbcs'
+  require 'opc/paas/srvlist'
+  require 'opc/paas/instdelete'
+  # require 'OPC/Iaas/secrule'
+  # require 'OPC/Iaas/secapplication'
 end

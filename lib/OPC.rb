@@ -20,10 +20,9 @@ class OPC
   require 'json'
   require 'net/https'
   require 'uri'
-  require 'OPC/JaaS'
-  require 'OPC/IaaS'
-  require 'OPC/Dbaas'
-  require 'OPC/Util'
+  require 'opc/paas'
+  require 'opc/iaas'
+  require 'opc/util'
   require 'rbconfig'
 
   def initialize
@@ -49,21 +48,21 @@ class OPC
          fpath = ENV['HOME']
          if File.exist?("#{fpath}" + '/opcclientcfg.conf')
            cfgfile = Hash[*File.read("#{fpath}" + '/opcclientcfg.conf').split(/[= \n]+/)]
-           @@proxy_addr = cfgfile['proxy_addr']
-           @@proxy_port = cfgfile['proxy_port']
+           @proxy_addr = cfgfile['proxy_addr']
+           @proxy_port = cfgfile['proxy_port']
          else
-           @@proxy_addr = nil
-           @@proxy_port = nil
+           @proxy_addr = nil
+           @proxy_port = nil
          end # end of linux if
        when /solaris|bsd/
          fpath = ENV['HOME']
          if File.exist?("#{fpath}" + '/opcclientcfg.conf')
            cfgfile = Hash[*File.read("#{fpath}" + '/opcclientcfg.conf').split(/[= \n]+/)]
-           @@proxy_addr = cfgfile['proxy_addr']
-           @@proxy_port = cfgfile['proxy_port']
+           @proxy_addr = cfgfile['proxy_addr']
+           @proxy_port = cfgfile['proxy_port']
          else
-           @@proxy_addr = nil
-           @@proxy_port = nil
+           @proxy_addr = nil
+           @proxy_port = nil
          end # end of unix if
        else
          fail Error::WebDriverError, "unknown os: #{host_os.inspect}"
@@ -71,3 +70,4 @@ class OPC
       )
   end # end of method
 end # end of class
+

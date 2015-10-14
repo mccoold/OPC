@@ -13,41 +13,53 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-class SrvList < Jaas
-  def service_list(domain_id, user, passwd)
+class SrvList < Paas
+  def initialize(id_domain, user, passwd)
+    @id_domain = id_domain
+    @user = user
+    @passwd = passwd
+    proxy = Proxy.new
+    proxy = proxy.proxy
+    @proxy_addr = proxy.at(0)
+    @proxy_port = proxy.at(1)
+  end
+  
+  def service_list(service)
     # list all instances in an account
-    uri = URI.parse("https://jaas.oraclecloud.com/paas/service/jcs/api/v1.1/instances/#{domain_id}")
+    uri = URI.parse("https://jaas.oraclecloud.com/paas/service/jcs/api/v1.1/instances/" + @id_domain) if service == 'jcs'
+    uri = URI.parse("https://dbaas.oraclecloud.com/paas/service/dbcs/api/v1.1/instances/" + @id_domain) if service == 'dbcs'
     http = Net::HTTP.new(uri.host, uri.port, @proxy_addr, @proxy_port)
     http.use_ssl = true
     http.verify_mode = OpenSSL::SSL::VERIFY_NONE
     request = Net::HTTP::Get.new(uri.request_uri)
-    request.basic_auth "#{user}", "#{passwd}"
-    request.add_field 'X-ID-TENANT-NAME', "#{domain_id}"
+    request.basic_auth @user, @passwd
+    request.add_field 'X-ID-TENANT-NAME', @id_domain
     response = http.request(request)
     response
   end # end method servicelist
 
-  def inst_list(domain_id, user, passwd, inst_id)
+  def inst_list(service, inst_id)
     # provides details on an instance
-    uri = URI.parse("https://jaas.oraclecloud.com/paas/service/jcs/api/v1.1/instances/#{domain_id}/#{inst_id}")
+    uri = URI.parse("https://jaas.oraclecloud.com/paas/service/jcs/api/v1.1/instances/" + @id_domain + "/#{inst_id}") if service == 'jcs'
+    uri = URI.parse("https://dbaas.oraclecloud.com/paas/service/dbcs/api/v1.1/instances/" + @id_domain + "/#{inst_id}") if service == 'dbcs'
     http = Net::HTTP.new(uri.host, uri.port, @proxy_addr, @proxy_port)
     http.use_ssl = true
     http.verify_mode = OpenSSL::SSL::VERIFY_NONE
     request = Net::HTTP::Get.new(uri.request_uri)
-    request.basic_auth "#{user}", "#{passwd}"
-    request.add_field 'X-ID-TENANT-NAME', "#{domain_id}"
+    request.basic_auth @user, @passwd
+    request.add_field 'X-ID-TENANT-NAME', @id_domain
     http.request(request)
   end # end method instlist
 
-  def managed_list(domain_id, user, passwd, inst_id)
+  def managed_list(inst_id)
     # provides details on an instance
-    uri = URI.parse("https://jaas.oraclecloud.com/paas/service/jcs/api/v1.1/instances/#{domain_id}/#{inst_id}/servers")
+    uri = URI.parse("https://jaas.oraclecloud.com/paas/service/jcs/api/v1.1/instances/" + @domain_id + "/#{inst_id}/servers")
     http = Net::HTTP.new(uri.host, uri.port, @proxy_addr, @proxy_port)
     http.use_ssl = true
     http.verify_mode = OpenSSL::SSL::VERIFY_NONE
     request = Net::HTTP::Get.new(uri.request_uri)
-    request.basic_auth "#{user}", "#{passwd}"
-    request.add_field 'X-ID-TENANT-NAME', "#{domain_id}"
+    request.basic_auth @user, @passwd
+    request.add_field 'X-ID-TENANT-NAME', @id_domain
 
     response = http.request(request)
     if response.code == '200'

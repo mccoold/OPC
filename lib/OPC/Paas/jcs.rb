@@ -13,11 +13,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-class Jaas < OPC
-  require 'OPC/Jaas/srvlist'
-  require 'OPC/Jaas/instcreate'
-  require 'OPC/Jaas/instdelete'
-  require 'OPC/Jaas/jaasManager'
-  require 'OPC/Jaas/backupmanager'
+class Jcs < Paas
+  require 'opc/paas/jcs/jaasManager'
+  require 'opc/paas/jcs/backupmanager'
   
 end

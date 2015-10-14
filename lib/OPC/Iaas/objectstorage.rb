@@ -13,7 +13,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-class Storage < Iaas
+class ObjectStorage < Iaas
   def get_token(id_domain, user, passwd)
     url = 'https://storage.us2.oraclecloud.com/auth/v1.0'
     uri = URI.parse(url)

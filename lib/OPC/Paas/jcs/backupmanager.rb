@@ -13,7 +13,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-class BackUpManager < Jaas
+class BackUpManager < Jcs
   def backup_config_list(inst_id, domain_id, user, passwd)
     # list all instances in an account
     uri = URI.parse("https://jaas.oraclecloud.com/paas/service/jcs/api/v1.1/instances/#{domain_id}/#{inst_id}/backupconfig")

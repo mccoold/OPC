@@ -6,7 +6,7 @@
 creating, deleting, resizing, backups, and datagrid: Java Instances, Database instances, and storage.
 This gem is the API other gems depend on this gem for connectivity
 
-* Version 0.0.1
+* Version 0.2.0
 
 ### Setup and Dependencies ###
 
@@ -22,7 +22,7 @@ Install the opc_client gem, which depends on this gem,  that gem will give you a
 
 ### Class and Method Descriptions ###
 
-See [CLASSES_README](https://github.com/mccoold/OPC/blob/master/CLASSES_README.md)
+See [CLASSES_README](https://bitbucket.org/mcoold/opc/src/f449a05b412ec3bf401642cc333efbcdb4401ce5/CLASSES_README.md?at=master)
 
 ### Repo Owner ###
 

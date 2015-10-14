@@ -13,7 +13,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-class Util < OPC
-  require 'opc/util/encrypt'
-  require 'opc/util/proxy'
+class Dbcs < OPC
+  require 'opc/paas/dbcs/dbaasManager'
 end
