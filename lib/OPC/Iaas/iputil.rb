@@ -13,7 +13,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-class SecList < Iaas
+class IPUtil < Iaas
   def initialize(id_domain, user, passwd)
     @id_domain = id_domain
     @user = user
@@ -24,10 +24,11 @@ class SecList < Iaas
     @proxy_port = proxy.at(1)
   end
   
-  def list(restendpoint, container, action)
+  def list(restendpoint, container, action, function)
+    authcookie = ComputeBase.new
     authcookie = ComputeBase.new
     authcookie = authcookie.authenticate(@id_domain, @user, @passwd)
-    url = restendpoint + '/seclist/Compute-' + @id_domain + container
+    url = restendpoint + '/ip/' + function + '/Compute-' + @id_domain  + container
     uri = URI.parse(url)
     http = Net::HTTP.new(uri.host, uri.port, @proxy_addr, @proxy_port)   # Creates a http object
     http.use_ssl = true    # When using https
@@ -39,10 +40,10 @@ class SecList < Iaas
     response = http.request(request)
   end # end or method 
   
-  def discover(restendpoint, container, action)
+  def discover(restendpoint, container, action, function)
     authcookie = ComputeBase.new
     authcookie = authcookie.authenticate(@id_domain, @user, @passwd)
-    url = restendpoint + '/seclist/Compute-' + @id_domain + container
+    url = restendpoint + '/ip/' + function + '/Compute-' + @id_domain + container
     uri = URI.parse(url)
     http = Net::HTTP.new(uri.host, uri.port, @proxy_addr, @proxy_port)   # Creates a http object
     http.use_ssl = true    # When using https
@@ -54,12 +55,12 @@ class SecList < Iaas
     response = http.request(request)
   end # end or method 
   
-  def update(restendpoint, seclist, action, *data)
+  def update(restendpoint, ip, action, function, *data)
       data_hash = data.at(0)
       authcookie = ComputeBase.new
       authcookie = authcookie.authenticate(@id_domain, @user, @passwd)
-      url = restendpoint + '/seclist' + seclist if action == 'update'
-      url = restendpoint + '/seclist/' if action == 'create'
+      url = restendpoint + '/ip/' + function + ip if action == 'update'
+      url = restendpoint + '/ip/' + function if action == 'create'
       uri = URI.parse(url)
       http = Net::HTTP.new(uri.host, uri.port, @proxy_addr, @proxy_port)   # Creates a http object
       http.use_ssl = true    # When using https

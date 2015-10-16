@@ -14,11 +14,14 @@
 # limitations under the License.
 #
 class Iaas < OPC
-  require 'OPC/Iaas/objectstorage'
-  require 'OPC/Iaas/computebase'
-  require 'OPC/Iaas/instance'
-  require 'OPC/Iaas/seclist'
-  require 'OPC/Iaas/blockstorage'
-  require 'OPC/Iaas/secrule'
-  require 'OPC/Iaas/secapplication'
+  require 'opc/iaas/objectstorage'
+  require 'opc/iaas/computebase'
+  require 'opc/iaas/instance'
+  require 'opc/iaas/seclist'
+  require 'opc/iaas/secassoc'
+  require 'opc/iaas/iputil'
+  require 'opc/iaas/seciplist'
+  require 'opc/iaas/blockstorage'
+  require 'opc/iaas/secrule'
+  require 'opc/iaas/secapplication'
 end

@@ -33,4 +33,3 @@ class ComputeBase < Iaas
     end # end of if
   end # end of authenticate
 end # end of class
-

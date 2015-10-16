@@ -13,7 +13,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-class SecList < Iaas
+class SecAssoc < Iaas
   def initialize(id_domain, user, passwd)
     @id_domain = id_domain
     @user = user
@@ -27,7 +27,7 @@ class SecList < Iaas
   def list(restendpoint, container, action)
     authcookie = ComputeBase.new
     authcookie = authcookie.authenticate(@id_domain, @user, @passwd)
-    url = restendpoint + '/seclist/Compute-' + @id_domain + container
+    url = restendpoint + '/secassociation/Compute-' + @id_domain + container
     uri = URI.parse(url)
     http = Net::HTTP.new(uri.host, uri.port, @proxy_addr, @proxy_port)   # Creates a http object
     http.use_ssl = true    # When using https
@@ -42,7 +42,7 @@ class SecList < Iaas
   def discover(restendpoint, container, action)
     authcookie = ComputeBase.new
     authcookie = authcookie.authenticate(@id_domain, @user, @passwd)
-    url = restendpoint + '/seclist/Compute-' + @id_domain + container
+    url = restendpoint + '/secassociation/Compute-' + @id_domain + container
     uri = URI.parse(url)
     http = Net::HTTP.new(uri.host, uri.port, @proxy_addr, @proxy_port)   # Creates a http object
     http.use_ssl = true    # When using https
@@ -54,17 +54,15 @@ class SecList < Iaas
     response = http.request(request)
   end # end or method 
   
-  def update(restendpoint, seclist, action, *data)
+  def update(restendpoint, secassociation, action, *data)
       data_hash = data.at(0)
       authcookie = ComputeBase.new
       authcookie = authcookie.authenticate(@id_domain, @user, @passwd)
-      url = restendpoint + '/seclist' + seclist if action == 'update'
-      url = restendpoint + '/seclist/' if action == 'create'
+      url = restendpoint + '/secassociation/' if action == 'create'
       uri = URI.parse(url)
       http = Net::HTTP.new(uri.host, uri.port, @proxy_addr, @proxy_port)   # Creates a http object
       http.use_ssl = true    # When using https
       http.verify_mode = OpenSSL::SSL::VERIFY_NONE
-      request = Net::HTTP::Put.new(uri.request_uri) if action == 'update'
       request = Net::HTTP::Post.new(uri.request_uri) if action == 'create'
       request = Net::HTTP::Delete.new(uri.request_uri) if action == 'delete'
       request.add_field 'Content-type', 'application/oracle-compute-v3+json'
