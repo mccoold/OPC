@@ -23,10 +23,8 @@ class Instance < Iaas
     http.use_ssl = true    # When using https
     http.verify_mode = OpenSSL::SSL::VERIFY_NONE
     request = Net::HTTP::Get.new(uri.request_uri)
-    #request.add_field 'Content-type', 'application/oracle-compute-v3+json'
     request.add_field 'accept', 'application/oracle-compute-v3+json'
     request.add_field 'Cookie', authcookie
-    response = http.request(request)
-    
+    http.request(request)
   end
 end

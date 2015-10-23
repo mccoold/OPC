@@ -23,18 +23,21 @@ class InstDelete < Paas
     @proxy_addr = proxy.at(0)
     @proxy_port = proxy.at(1)
   end
-  
+
   def delete(service, data, inst_id)
-    url = "https://jaas.oraclecloud.com/paas/service/jcs/api/v1.1/instances/" + @id_domain + "/#{inst_id}" if service == 'jcs'
-    url = "https://dbaas.oraclecloud.com/paas/service/dbcs/api/v1.1/instances/#{domain_id}/#{inst_id}" if service == 'dbcs'
+    url = 'https://jaas.oraclecloud.com/paas/service/jcs/api/v1.1/instances/' + @id_domain +
+          "/#{inst_id}" if service == 'jcs'
+    url = 'https://dbaas.oraclecloud.com/paas/service/dbcs/api/v1.1/instances/' + @id_domain + "/#{inst_id}" if service == 'dbcs'
     uri = URI.parse(url)
     http = Net::HTTP.new(uri.host, uri.port, @proxy_addr, @proxy_port)
     http.use_ssl = true
     http.verify_mode = OpenSSL::SSL::VERIFY_NONE
-    request = Net::HTTP::Put.new(uri.request_uri)
+    request = Net::HTTP::Delete.new(uri.request_uri) if service == 'dbcs'
+    request = Net::HTTP::Put.new(uri.request_uri) if service == 'jcs'
     request.basic_auth @user, @passwd
-    request.add_field 'X-ID-TENANT-NAME', @id_domain 
-    request.add_field 'Content-Type', 'application/vnd.com.oracle.oracloud.provisioning.Service+json'
+    request.add_field 'X-ID-TENANT-NAME', @id_domain
+    request.add_field 'Content-Type', 'application/vnd.com.oracle.oracloud.provisioning.Service+json' if service == 'jcs'
+    request.add_field 'Content-Type', 'application/json' if service == 'dbcs'
     response =  http.request(request, data.to_json) if service == 'jcs'
     response =  http.request(request) if service == 'dbcs'
     response.body

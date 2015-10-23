@@ -14,5 +14,5 @@
 # limitations under the License.
 #
 class Dbcs < OPC
-  require 'opc/paas/dbcs/dbaasManager'
+  require 'opc/paas/dbcs/dbaasmanager'
 end

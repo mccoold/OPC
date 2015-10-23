@@ -23,7 +23,7 @@ class SecApp < Iaas
     @proxy_addr = proxy.at(0)
     @proxy_port = proxy.at(1)
   end
-  
+
   def discover(restendpoint, container)
     authcookie = ComputeBase.new
     authcookie = authcookie.authenticate(@id_domain, @user, @passwd)
@@ -33,30 +33,28 @@ class SecApp < Iaas
     http.use_ssl = true    # When using https
     http.verify_mode = OpenSSL::SSL::VERIFY_NONE
     request = Net::HTTP::Get.new(uri.request_uri)
-    #request.add_field 'Content-type', 'application/oracle-compute-v3+json'
     request.add_field 'accept', 'application/oracle-compute-v3+directory+json'
     request.add_field 'Cookie', authcookie
-    response = http.request(request)
+    http.request(request)
   end
-  
+
   def list(restendpoint, secapp)
     authcookie = ComputeBase.new
     authcookie = authcookie.authenticate(@id_domain, @user, @passwd)
     url = restendpoint + '/secapplication/Compute-' + @id_domain + '/?name=' + secapp
-    uri = URI.parse(url) 
+    uri = URI.parse(url)
     http = Net::HTTP.new(uri.host, uri.port, @proxy_addr, @proxy_port)   # Creates a http object
     http.use_ssl = true    # When using https
     http.verify_mode = OpenSSL::SSL::VERIFY_NONE
     request = Net::HTTP::Get.new(uri.request_uri)
-    #request.add_field 'Content-type', 'application/oracle-compute-v3+json'
     request.add_field 'accept', 'application/oracle-compute-v3+json'
     request.add_field 'Cookie', authcookie
-    response = http.request(request)
+    http.request(request)
   end
-  
+
   def modify(restendpoint, action, *data)
-    data_hash = data.at(0) if data.kind_of?(Array)
-    data_hash = data if data.kind_of?(String)  # this tests if there are extra [] in the JSON
+    data_hash = data.at(0) if data.is_a?(Array)
+    data_hash = data if data.is_a?(String)  # this tests if there are extra [] in the JSON
     authcookie = ComputeBase.new
     authcookie = authcookie.authenticate(@id_domain, @user, @passwd)
     url = restendpoint + '/secapplication/' if action == 'create'
@@ -70,7 +68,7 @@ class SecApp < Iaas
     request.add_field 'Content-type', 'application/oracle-compute-v3+json'
     request.add_field 'accept', 'application/oracle-compute-v3+directory+json'
     request.add_field 'Cookie', authcookie
-    return response = http.request(request, data_hash.to_json) if action == 'create'
-    return response = http.request(request) if action == 'delete'
+    return  http.request(request, data_hash.to_json) if action == 'create'
+    return  http.request(request) if action == 'delete'
   end
 end

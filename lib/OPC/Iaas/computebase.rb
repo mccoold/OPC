@@ -21,8 +21,8 @@ class ComputeBase < Iaas
     http.use_ssl = true    # When using https
     http.verify_mode = OpenSSL::SSL::VERIFY_NONE
     request = Net::HTTP::Post.new(uri.request_uri)
-    euser = "/Compute-" + id_domain + '/' + user
-    data = {'user' => euser, 'password' => passwd}
+    euser = '/Compute-' + id_domain + '/' + user
+    data = { 'user' => euser, 'password' => passwd }
     request.add_field 'Content-type', 'application/oracle-compute-v3+json'
     request.add_field 'accept', 'application/oracle-compute-v3+json'
     response = http.request(request, data.to_json)

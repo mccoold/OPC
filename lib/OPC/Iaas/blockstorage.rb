@@ -14,9 +14,19 @@
 # limitations under the License.
 #
 class BlockStorage < Iaas
-  def list(restendpoint, container, action, id_domain, user, passwd)
+  def initialize(id_domain, user, passwd)
+    @id_domain = id_domain
+    @user = user
+    @passwd = passwd
+    proxy = Proxy.new
+    proxy = proxy.proxy
+    @proxy_addr = proxy.at(0)
+    @proxy_port = proxy.at(1)
+  end
+
+  def list(restendpoint, container, action)
     authcookie = ComputeBase.new
-    authcookie = authcookie.authenticate(id_domain, user, passwd)
+    authcookie = authcookie.authenticate(@id_domain, @user, @passwd)
     url = restendpoint + '/storage/volume' + container
     uri = URI.parse(url)
     http = Net::HTTP.new(uri.host, uri.port, @proxy_addr, @proxy_port)   # Creates a http object
@@ -26,15 +36,15 @@ class BlockStorage < Iaas
     request.add_field 'accept', 'application/oracle-compute-v3+json' if action == 'details'
     request.add_field 'accept', 'application/oracle-compute-v3+directory+json' if action == 'list'
     request.add_field 'Cookie', authcookie
-    response = http.request(request)
-  end # end or method 
-  
-  def update(restendpoint, action, id_domain, user, passwd, *data)
+    http.request(request)
+  end # end or method
+
+  def update(restendpoint, action, *data)
     data_hash = data.at(0)
     authcookie = ComputeBase.new
-    authcookie = authcookie.authenticate(id_domain, user, passwd)
+    authcookie = authcookie.authenticate(@id_domain, @user, @passwd)
     url = restendpoint + '/storage/volume/'
-    uri = URI.parse(url) 
+    uri = URI.parse(url)
     http = Net::HTTP.new(uri.host, uri.port, @proxy_addr, @proxy_port)   # Creates a http object
     http.use_ssl = true    # When using https
     http.verify_mode = OpenSSL::SSL::VERIFY_NONE
@@ -45,14 +55,14 @@ class BlockStorage < Iaas
     request.add_field 'Cookie', authcookie
     response = http.request(request, data_hash.to_json) unless action == 'delete'
     response = http.request(request) if action == 'delete'
-end # end or method
+  end # end or method
 
-def attach(restendpoint, action, id_domain, user, passwd, *data)
+  def attach(restendpoint, action, *data)
     data_hash = data.at(0)
     authcookie = ComputeBase.new
-    authcookie = authcookie.authenticate(id_domain, user, passwd)
+    authcookie = authcookie.authenticate(@id_domain, @user, @passwd)
     url = restendpoint + '/storage/attachment/'
-    uri = URI.parse(url) 
+    uri = URI.parse(url)
     http = Net::HTTP.new(uri.host, uri.port, @proxy_addr, @proxy_port)   # Creates a http object
     http.use_ssl = true    # When using https
     http.verify_mode = OpenSSL::SSL::VERIFY_NONE
@@ -63,6 +73,5 @@ def attach(restendpoint, action, id_domain, user, passwd, *data)
     request.add_field 'Cookie', authcookie
     response = http.request(request, data_hash.to_json) unless action == 'delete'
     response = http.request(request) if action == 'delete'
-end # end or method
-
+  end # end or method
 end

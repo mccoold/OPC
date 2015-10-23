@@ -14,7 +14,7 @@
 # limitations under the License.
 #
 class Jcs < Paas
-  require 'opc/paas/jcs/jaasManager'
+  require 'opc/paas/jcs/jaasmanager'
   require 'opc/paas/jcs/backupmanager'
   
 end

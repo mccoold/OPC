@@ -23,9 +23,9 @@ class DbaasManager < Dbcs
     @proxy_addr = proxy.at(0)
     @proxy_port = proxy.at(1)
   end
-  
-  def scale_up(data, domain_id, user, passwd, inst_id)
-    uri = URI.parse("https://dbaas.oraclecloud.com/paas/service/dbcs/api/v1.1/instances/" + @id_domain + "/" + inst_id)
+
+  def scale_up(data, inst_id)
+    uri = URI.parse('https://dbaas.oraclecloud.com/paas/service/dbcs/api/v1.1/instances/' + @id_domain + '/' + inst_id)
     http = Net::HTTP.new(uri.host, uri.port, @proxy_addr, @proxy_port)
     http.use_ssl = true
     http.verify_mode = OpenSSL::SSL::VERIFY_NONE
@@ -37,11 +37,11 @@ class DbaasManager < Dbcs
     response.body
   end # end of method scale up
 
-  def power(inst_id, action, id_domain, user, passwd)
+  def power(inst_id, action)
     config = {
       'lifecycleState'   => "#{action}"
     }
-    url = "https://dbaas.oraclecloud.com/paas/service/dbcs/api/v1.1/instances/" + @id_domain + "/" + inst_id
+    url = 'https://dbaas.oraclecloud.com/paas/service/dbcs/api/v1.1/instances/' + @id_domain + '/' + inst_id
     uri = URI.parse(url)
     http = Net::HTTP.new(uri.host, uri.port, @proxy_addr, @proxy_port)   # Creates a http object
     http.use_ssl = true    # When using https

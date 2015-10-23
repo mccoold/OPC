@@ -14,15 +14,25 @@
 # limitations under the License.
 #
 class ObjectStorage < Iaas
-  def get_token(id_domain, user, passwd)
+  def initialize(id_domain, user, passwd)
+    @id_domain = id_domain
+    @user = user
+    @passwd = passwd
+    proxy = Proxy.new
+    proxy = proxy.proxy
+    @proxy_addr = proxy.at(0)
+    @proxy_port = proxy.at(1)
+  end
+
+  def build_token
     url = 'https://storage.us2.oraclecloud.com/auth/v1.0'
     uri = URI.parse(url)
     http = Net::HTTP.new(uri.host, uri.port, @proxy_addr, @proxy_port)   # Creates a http object
     http.use_ssl = true    # When using https
     http.verify_mode = OpenSSL::SSL::VERIFY_NONE
     request = Net::HTTP::Get.new(uri.request_uri)
-    request.add_field 'X-Storage-User', "Storage-#{id_domain}:#{user}"
-    request.add_field 'X-Storage-Pass', "#{passwd}"
+    request.add_field 'X-Storage-User', 'Storage-' + @id_domain + ':' + @user
+    request.add_field 'X-Storage-Pass', @passwd
     response = http.request(request)
     if response.code == '200'
       return response['X-Storage-Url'], response['X-Auth-Token']
@@ -31,9 +41,9 @@ class ObjectStorage < Iaas
     end # end of if
   end # end of method
 
-  def create(id_domain, user, passwd, container)
-    tokens = get_token(id_domain, user, passwd)
-    if !tokens.kind_of?(Array)
+  def create(container)
+    tokens = build_token
+    if !tokens.is_a?(Array)
       return tokens
     else
       stgurl = tokens.at(0)
@@ -49,9 +59,9 @@ class ObjectStorage < Iaas
     end # end of if
   end  # end of method
 
-  def list(id_domain, user, passwd)
-    tokens = get_token(id_domain, user, passwd)
-    if !tokens.kind_of?(Array)
+  def list
+    tokens = build_token
+    if !tokens.is_a?(Array)
       return tokens
     else
       stgurl = tokens.at(0)
@@ -67,9 +77,9 @@ class ObjectStorage < Iaas
     end # end of if
   end  # end of method
 
-  def contents(id_domain, user, passwd, container)
-    tokens = get_token(id_domain, user, passwd)
-    if !tokens.kind_of?(Array)
+  def contents(container)
+    tokens = build_token
+    if !tokens.is_a?(Array)
       return tokens
     else
       stgurl = tokens.at(0)
@@ -86,9 +96,9 @@ class ObjectStorage < Iaas
     # end of if
   end  # end of method
 
-  def delete(id_domain, user, passwd, container)
-    tokens = get_token(id_domain, user, passwd)
-    if !tokens.kind_of?(Array)
+  def delete(container)
+    tokens = build_token
+    if !tokens.is_a?(Array)
       return tokens
     else
       stgurl = tokens.at(0)
@@ -103,11 +113,11 @@ class ObjectStorage < Iaas
       http.request(request)
     end # end of if
   end  # end of method
-  
-  def object_create(local_file_name, container, object_name, file_type, id_domain, user, passwd)
+
+  def object_create(local_file_name, container, object_name, file_type)
     require 'net/http/post/multipart'
-    tokens = get_token(id_domain, user, passwd)
-    if !tokens.kind_of?(Array)
+    tokens = build_token
+    if !tokens.is_a?(Array)
       return tokens
     else
       stgurl = tokens.at(0)
@@ -118,13 +128,12 @@ class ObjectStorage < Iaas
       http.use_ssl = true  # When using https
       http.verify_mode = OpenSSL::SSL::VERIFY_NONE
       File.open(local_file_name) do |f|
-        request = Net::HTTP::Post::Multipart.new uri.path,
-                "file" => UploadIO.new(f, "#{file_type}")
+        request = Net::HTTP::Post::Multipart.new uri.path, 'file' => UploadIO.new(f, "#{file_type}")
         request.add_field 'X-Auth-Token', "#{stgtkn}"
         request = http.start do |http|
           http.request(request)
-        end #
-      end 
+        end # end of loop for request
+      end # end of file loop
     end # end of if for tokens
   end  # end of method
 end # end of class
