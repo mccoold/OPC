@@ -24,7 +24,7 @@ class LaunchPlan < Iaas
     @proxy_port = proxy.at(1)
   end
 
-  def launch(restendpoint, action, *data)
+  def launch(restendpoint, *data)
     data_hash = data.at(0)
     authcookie = ComputeBase.new
     authcookie = authcookie.authenticate(@id_domain, @user, @passwd, restendpoint)

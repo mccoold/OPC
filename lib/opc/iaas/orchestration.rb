@@ -26,7 +26,7 @@ class Orchestration < Iaas
 
   def list(restendpoint, container, action)
     authcookie = ComputeBase.new
-    authcookie = authcookie.authenticate(@id_domain, @user, @passwd)
+    authcookie = authcookie.authenticate(@id_domain, @user, @passwd, restendpoint)
     url = restendpoint + '/orchestration' + container
     uri = URI.parse(url)
     http = Net::HTTP.new(uri.host, uri.port, @proxy_addr, @proxy_port)   # Creates a http object
@@ -42,23 +42,27 @@ class Orchestration < Iaas
   def update(restendpoint, action, *data)
     data_hash = data.at(0)
     authcookie = ComputeBase.new
-    authcookie = authcookie.authenticate(@id_domain, @user, @passwd)
-    url = restendpoint + '/orchestration/'
+    authcookie = authcookie.authenticate(@id_domain, @user, @passwd, restendpoint)
+    name = data_hash['name'] if action == 'update'
+    url = restendpoint + '/orchestration/' if action == 'create'
+    url = restendpoint + '/orchestration'  + name if action == 'update'
+    url = restendpoint + '/orchestration'  + data_hash if action == 'delete'
     uri = URI.parse(url)
     http = Net::HTTP.new(uri.host, uri.port, @proxy_addr, @proxy_port)   # Creates a http object
     http.use_ssl = true    # When using https
     http.verify_mode = OpenSSL::SSL::VERIFY_NONE
     request = Net::HTTP::Post.new(uri.request_uri) if action == 'create'
-    request = Net::HTTP::Post.new(uri.request_uri) if action == 'update'
+    request = Net::HTTP::Put.new(uri.request_uri) if action == 'update'
     request = Net::HTTP::Delete.new(uri.request_uri) if action == 'delete'
     request.add_field 'Content-type', 'application/oracle-compute-v3+json'
     request.add_field 'accept', 'application/oracle-compute-v3+json'
     request.add_field 'Cookie', authcookie
     response = http.request(request, data_hash.to_json) unless action == 'delete'
     response = http.request(request) if action == 'delete'
+    return response
   end # end or method
   
-  def manage(restendpoint, action, launchplan, data)
+  def manage(restendpoint, action, launchplan)
     # data_hash = data.at(0)
     authcookie = ComputeBase.new
     authcookie = authcookie.authenticate(@id_domain, @user, @passwd, restendpoint)
@@ -67,10 +71,10 @@ class Orchestration < Iaas
     http = Net::HTTP.new(uri.host, uri.port, @proxy_addr, @proxy_port)   # Creates a http object
     http.use_ssl = true    # When using https
     http.verify_mode = OpenSSL::SSL::VERIFY_NONE
-    request = Net::HTTP::Putt.new(uri.request_uri) 
+    request = Net::HTTP::Put.new(uri.request_uri) 
     request.add_field 'Content-type', 'application/oracle-compute-v3+json'
     request.add_field 'accept', 'application/oracle-compute-v3+json'
     request.add_field 'Cookie', authcookie
-    response = http.request(request, data.to_json)
+    response = http.request(request)
   end # end or method
 end

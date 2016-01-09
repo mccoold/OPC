@@ -22,14 +22,17 @@ class JaasManager < Jcs
     proxy = proxy.proxy
     @proxy_addr = proxy.at(0)
     @proxy_port = proxy.at(1)
+    @timeout = '10'
   end
 
-  def mngstate(timeout, inst_id, action)
+  attr_writer :url, :timeout
+
+  def mngstate(inst_id, action)
     config = {
-      'lifecycleState'   => "#{action}",
-      'lifecycleTimeout' => "#{timeout}"
+      'lifecycleState'   => action,
+      'lifecycleTimeout' => @timeout
              }
-    url = 'https://jaas.oraclecloud.com/paas/service/jcs/api/v1.1/instances/' + @id_domain + '/' + inst_id
+    url =  @url + @id_domain + '/' + inst_id
     uri = URI.parse(url)
     http = Net::HTTP.new(uri.host, uri.port, @proxy_addr, @proxy_port)   # Creates a http object
     http.use_ssl = true    # When using https
@@ -38,13 +41,11 @@ class JaasManager < Jcs
     request.basic_auth @user, @passwd
     request.add_field 'Content-Type', 'application/vnd.com.oracle.oracloud.provisioning.Service+json'
     request.add_field 'X-ID-TENANT-NAME', @id_domain
-    response = http.request(request, config.to_json)
-    response
+    http.request(request, config.to_json)
   end   # end method stop
 
   def scale_up(inst_id, cluster_id)
-    url = 'https://jaas.oraclecloud.com/paas/service/jcs/api/v1.1/instances/' + @id_domain +
-          '/' + inst_id + '/servers/' + cluster_id
+    url = @url + @id_domain + '/' + inst_id + '/servers/' + cluster_id
     uri = URI.parse(url)
     http = Net::HTTP.new(uri.host, uri.port, @proxy_addr, @proxy_port)
     http.use_ssl = true
@@ -56,8 +57,7 @@ class JaasManager < Jcs
   end # end of method
 
   def scale_in(inst_id, server_id)
-    url = 'https://jaas.oraclecloud.com/paas/service/jcs/api/v1.1/instances/' +
-          @id_domain + "/#{inst_id}/servers/#{server_id}"
+    url = @url + @id_domain + "/#{inst_id}/servers/#{server_id}"
     uri = URI.parse(url)
     http = Net::HTTP.new(uri.host, uri.port, @proxy_addr, @proxy_port)
     http.use_ssl = true
@@ -69,8 +69,7 @@ class JaasManager < Jcs
   end  # end of method
 
   def patch_precheck(inst_id, patch_id)
-    url = 'https://jaas.oraclecloud.com/paas/service/jcs/api/v1.1/instances/' + @id_domain +
-          "/#{inst_id}/patches/checks/#{patch_id}"
+    url = @url + @id_domain + "/#{inst_id}/patches/checks/#{patch_id}"
     uri = URI.parse(url)
     http = Net::HTTP.new(uri.host, uri.port, @proxy_addr, @proxy_port)
     http.use_ssl = true
@@ -82,8 +81,7 @@ class JaasManager < Jcs
   end # end of method
 
   def patch(inst_id, patch_id)
-    url = 'https://jaas.oraclecloud.com/paas/service/jcs/api/v1.1/instances/' +
-          @id_domain + "/#{inst_id}/patches/#{patch_id}"
+    url = @url + @id_domain + "/#{inst_id}/patches/#{patch_id}"
     uri = URI.parse(url)
     http = Net::HTTP.new(uri.host, uri.port, @proxy_addr, @proxy_port)
     http.use_ssl = true
@@ -95,8 +93,8 @@ class JaasManager < Jcs
   end # end of method
 
   def patch_rollback(inst_id, rollback_id)
-    uri = URI.parse('https://jaas.oraclecloud.com/paas/service/jcs/api/v1.1/instances/' + @id_domain +
-                   "/#{inst_id}/patches/#{rollback_id}/rollback")
+    url = @url + @id_domain + "/#{inst_id}/patches/#{rollback_id}/rollback"
+    uri = URI.parse(url)
     http = Net::HTTP.new(uri.host, uri.port, @proxy_addr, @proxy_port)
     http.use_ssl = true
     http.verify_mode = OpenSSL::SSL::VERIFY_NONE
@@ -107,8 +105,7 @@ class JaasManager < Jcs
   end # end of method
 
   def applied_patches(inst_id)
-    url = 'https://jaas.oraclecloud.com/paas/service/jcs/api/v1.1/instances/' +
-          @id_domain + "/#{inst_id}/patches/applied"
+    url = @url + @id_domain + "/#{inst_id}/patches/applied"
     uri = URI.parse(url)
     http = Net::HTTP.new(uri.host, uri.port, @proxy_addr, @proxy_port)
     http.use_ssl = true
@@ -120,8 +117,8 @@ class JaasManager < Jcs
   end # end of method
 
   def available_patches(inst_id)
-    uri = URI.parse('https://jaas.oraclecloud.com/paas/service/jcs/api/v1.1/instances/' +
-                    @id_domain + "/#{inst_id}/patches/available")
+    url = @url + @id_domain + "/#{inst_id}/patches/available"
+    uri = URI.parse(url)
     http = Net::HTTP.new(uri.host, uri.port, @proxy_addr, @proxy_port)
     http.use_ssl = true
     http.verify_mode = OpenSSL::SSL::VERIFY_NONE

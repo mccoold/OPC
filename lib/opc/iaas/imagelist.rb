@@ -13,7 +13,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-class Instance < Iaas
+class ImageList < Iaas
   def initialize(id_domain, user, passwd)
     @id_domain = id_domain
     @user = user
@@ -27,28 +27,15 @@ class Instance < Iaas
   def list(restendpoint, container)
     authcookie = ComputeBase.new
     authcookie = authcookie.authenticate(@id_domain, @user, @passwd, restendpoint)
-    url = restendpoint + '/instance/Compute-' + @id_domain + '/' + container
+    url = restendpoint + '/imagelist' + container 
     uri = URI.parse(url)
     http = Net::HTTP.new(uri.host, uri.port, @proxy_addr, @proxy_port)   # Creates a http object
     http.use_ssl = true    # When using https
     http.verify_mode = OpenSSL::SSL::VERIFY_NONE
     request = Net::HTTP::Get.new(uri.request_uri)
-    request.add_field 'accept', 'application/oracle-compute-v3+json'
+    request.add_field 'accept', 'application/oracle-compute-v3+directory+json'
     request.add_field 'Cookie', authcookie
     http.request(request)
   end
   
-  def delete(restendpoint, instance)
-    authcookie = ComputeBase.new
-    authcookie = authcookie.authenticate(@id_domain, @user, @passwd, restendpoint)
-    url = restendpoint + '/instance/Compute-' + @id_domain + '/' + instance
-    uri = URI.parse(url)
-    http = Net::HTTP.new(uri.host, uri.port, @proxy_addr, @proxy_port)   # Creates a http object
-    http.use_ssl = true    # When using https
-    http.verify_mode = OpenSSL::SSL::VERIFY_NONE
-    request = Net::HTTP::Delete.new(uri.request_uri)
-    request.add_field 'accept', 'application/oracle-compute-v3+json'
-    request.add_field 'Cookie', authcookie
-    http.request(request)
-  end
 end

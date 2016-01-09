@@ -14,7 +14,7 @@
 # limitations under the License.
 #
 class SrvList < Paas
-  def initialize(id_domain, user, passwd)
+  def initialize(id_domain, user, passwd, service)
     @id_domain = id_domain
     @user = user
     @passwd = passwd
@@ -22,30 +22,28 @@ class SrvList < Paas
     proxy = proxy.proxy
     @proxy_addr = proxy.at(0)
     @proxy_port = proxy.at(1)
+    @url = 'https://jaas.oraclecloud.com/paas/service/jcs/api/v1.1/instances/' + @id_domain if service == 'jcs'
+    @url = 'https://dbaas.oraclecloud.com/paas/service/dbcs/api/v1.1/instances/' + @id_domain if service == 'dbcs'
+    @url = 'https://jaas.oraclecloud.com/paas/service/soa/api/v1.1/instances/' + @id_domain  if service == 'soa'
   end
 
-  def service_list(service)
+  attr_writer :url
+
+  def service_list
     # list all instances in an account
-    uri = URI.parse('https://jaas.oraclecloud.com/paas/service/jcs/api/v1.1/instances/' +
-                     @id_domain) if service == 'jcs'
-    uri = URI.parse('https://dbaas.oraclecloud.com/paas/service/dbcs/api/v1.1/instances/' +
-                     @id_domain) if service == 'dbcs'
+    uri = URI.parse(@url)
     http = Net::HTTP.new(uri.host, uri.port, @proxy_addr, @proxy_port)
     http.use_ssl = true
     http.verify_mode = OpenSSL::SSL::VERIFY_NONE
     request = Net::HTTP::Get.new(uri.request_uri)
     request.basic_auth @user, @passwd
     request.add_field 'X-ID-TENANT-NAME', @id_domain
-    response = http.request(request)
-    response
+    http.request(request)
   end # end method servicelist
 
   def inst_list(service, inst_id)
     # provides details on an instance
-    uri = URI.parse('https://jaas.oraclecloud.com/paas/service/jcs/api/v1.1/instances/' + @id_domain +
-                    '/' + inst_id) if service == 'jcs'
-    uri = URI.parse('https://dbaas.oraclecloud.com/paas/service/dbcs/api/v1.1/instances/' + @id_domain +
-                    '/' + inst_id) if service == 'dbcs'
+    uri = URI.parse(@url + '/' + inst_id) 
     http = Net::HTTP.new(uri.host, uri.port, @proxy_addr, @proxy_port)
     http.use_ssl = true
     http.verify_mode = OpenSSL::SSL::VERIFY_NONE
@@ -57,19 +55,15 @@ class SrvList < Paas
 
   def managed_list(inst_id)
     # provides details on an instance
-    uri = URI.parse('https://jaas.oraclecloud.com/paas/service/jcs/api/v1.1/instances/' + @id_domain + "/#{inst_id}/servers")
+    uri = URI.parse(@url + "/#{inst_id}/servers")
     http = Net::HTTP.new(uri.host, uri.port, @proxy_addr, @proxy_port)
     http.use_ssl = true
     http.verify_mode = OpenSSL::SSL::VERIFY_NONE
     request = Net::HTTP::Get.new(uri.request_uri)
     request.basic_auth @user, @passwd
     request.add_field 'X-ID-TENANT-NAME', @id_domain
-
-    response = http.request(request)
-    if response.code == '200'
-      JSON.parse(response.body)
-    else
-      puts 'ERROR!!!'
-    end  # end if/else
+    http.request(request)
+    
   end # end method manlist
 end # end class
+

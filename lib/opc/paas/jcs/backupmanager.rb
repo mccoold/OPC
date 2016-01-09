@@ -24,9 +24,11 @@ class BackUpManager < Jcs
     @proxy_port = proxy.at(1)
   end
   
+  attr_writer :url
+  
   def config_list(inst_id)
     # list all instances in an account
-    uri = URI.parse('https://jaas.oraclecloud.com/paas/service/jcs/api/v1.1/instances/' + @id_domain + "/#{inst_id}/backupconfig")
+    uri = URI.parse(@url + "/#{inst_id}/backupconfig")
     http = Net::HTTP.new(uri.host, uri.port, @proxy_addr, @proxy_port)
     http.use_ssl = true
     http.verify_mode = OpenSSL::SSL::VERIFY_NONE
@@ -37,8 +39,8 @@ class BackUpManager < Jcs
   end # end method backuplist
 
   def config(data, inst_id)
-    # list all instances in an account
-    uri = URI.parse('https://jaas.oraclecloud.com/paas/service/jcs/api/v1.1/instances/' + @id_domain + "/#{inst_id}/backupconfig")
+    # updates config
+    uri = URI.parse(@url + @id_domain + "/#{inst_id}/backupconfig")
     http = Net::HTTP.new(uri.host, uri.port, @proxy_addr, @proxy_port)
     http.use_ssl = true
     http.verify_mode = OpenSSL::SSL::VERIFY_NONE
@@ -51,7 +53,7 @@ class BackUpManager < Jcs
 
   def initialize_backup(data, inst_id)
     # list all instances in an account
-    uri = URI.parse('https://jaas.oraclecloud.com/paas/service/jcs/api/v1.1/instances/' + @id_domain + "/#{inst_id}/backups")
+    uri = URI.parse(@url + @id_domain + "/#{inst_id}/backups")
     http = Net::HTTP.new(uri.host, uri.port, @proxy_addr, @proxy_port)
     http.use_ssl = true
     http.verify_mode = OpenSSL::SSL::VERIFY_NONE
@@ -65,11 +67,9 @@ class BackUpManager < Jcs
   def list(inst_id, backup_id)
     # list all backups in an account
     if !backup_id.nil?
-      uri = URI.parse('https://jaas.oraclecloud.com/paas/service/jcs/api/v1.1/instances/' +
-                      @id_domain + "/#{inst_id}/backups/#{backup_id}")
+      uri = URI.parse(@url + "/#{inst_id}/backups/#{backup_id}")
     else
-      uri = URI.parse('https://jaas.oraclecloud.com/paas/service/jcs/api/v1.1/instances/' + @id_domain +
-                      "/#{inst_id}/backups")
+      uri = URI.parse(@url + "/#{inst_id}/backups")
     end # end of if
     http = Net::HTTP.new(uri.host, uri.port, @proxy_addr, @proxy_port)
     http.use_ssl = true
@@ -82,8 +82,7 @@ class BackUpManager < Jcs
   end # end method backup list
 
   def delete(inst_id, backup_id)
-    uri = URI.parse('https://jaas.oraclecloud.com/paas/service/jcs/api/v1.1/instances/' +
-                    @id_domain + "/#{inst_id}/backups/#{backup_id}")
+    uri = URI.parse(@url + "/#{inst_id}/backups/#{backup_id}")
     http = Net::HTTP.new(uri.host, uri.port, @proxy_addr, @proxy_port)
     http.use_ssl = true
     http.verify_mode = OpenSSL::SSL::VERIFY_NONE

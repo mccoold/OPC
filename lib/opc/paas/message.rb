@@ -13,19 +13,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-class Iaas < OPC
-  require 'opc/iaas/objectstorage'
-  require 'opc/iaas/computebase'
-  require 'opc/iaas/instance'
-  require 'opc/iaas/seclist'
-  require 'opc/iaas/secassoc'
-  require 'opc/iaas/iputil'
-  require 'opc/iaas/orchestration'
-  require 'opc/iaas/launchplan'
-  require 'opc/iaas/seciplist'
-  require 'opc/iaas/blockstorage'
-  require 'opc/iaas/secrule'
-  require 'opc/iaas/shape'
-  require 'opc/iaas/imagelist'
-  require 'opc/iaas/secapplication'
+class Message < OPC
+  # require 'opc/paas/dbcs/dbaasmanager'
 end

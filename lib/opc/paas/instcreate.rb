@@ -14,7 +14,8 @@
 # limitations under the License.class OPC
 #
 class InstCreate < Paas
-  def initialize(id_domain, user, passwd)
+  def initialize(id_domain, user, passwd, service)
+    @service = service
     @id_domain = id_domain
     @user = user
     @passwd = passwd
@@ -22,23 +23,25 @@ class InstCreate < Paas
     proxy = proxy.proxy
     @proxy_addr = proxy.at(0)
     @proxy_port = proxy.at(1)
+    abort('you entered an incorrect value for action/service') unless service == 'jcs' || service == 'dbcs' || service == 'soa'
+    @url = 'https://jaas.oraclecloud.com/paas/service/jcs/api/v1.1/instances/' + @id_domain if service == 'jcs'
+    @url = 'https://jaas.oraclecloud.com/paas/service/soa/api/v1.1/instances/' + @id_domain if service == 'soa'
+    @url = 'https://dbaas.oraclecloud.com/paas/service/dbcs/api/v1.1/instances/' + @id_domain if service == 'dbcs'
   end
 
-  def create(data, service)
-    abort('you entered an incorrect value for action/service') unless service == 'jcs' || service == 'dbcs'
-    url = 'https://jaas.oraclecloud.com/paas/service/jcs/api/v1.1/instances/' + @id_domain if service == 'jcs'
-    url = 'https://dbaas.oraclecloud.com/paas/service/dbcs/api/v1.1/instances/' + @id_domain if service == 'dbcs'
-    uri = URI.parse(url)
+  attr_writer :url, :service
+    
+  def create(create_data)
+    uri = URI.parse(@url)
     http = Net::HTTP.new(uri.host, uri.port, @proxy_addr, @proxy_port) # Creates a http object
     http.use_ssl = true     # When using https
     http.verify_mode = OpenSSL::SSL::VERIFY_NONE
     request = Net::HTTP::Post.new(uri.request_uri)
     request.basic_auth @user, @passwd
     request.add_field 'X-ID-TENANT-NAME', @id_domain
-    request.add_field 'Content-Type', 'application/vnd.com.oracle.oracloud.provisioning.Service+json' if service == 'jcs'
-    request.add_field 'Content-Type', 'application/json' if service == 'dbcs'
-    response = http.request(request, data.to_json)
-    response
+    request.add_field 'Content-Type', 'application/vnd.com.oracle.oracloud.provisioning.Service+json' if @service == 'jcs'  
+    request.add_field 'Content-Type', 'application/json' if @service == 'dbcs' || @service == 'soa'
+    http.request(request, create_data.to_json)
   end   # end method create
 
   def create_status(url)
