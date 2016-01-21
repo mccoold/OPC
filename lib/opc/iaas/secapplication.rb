@@ -14,7 +14,7 @@
 # limitations under the License.
 #
 class SecApp < Iaas
-  def initialize(id_domain, user, passwd)
+  def initialize(id_domain, user, passwd) # rubocop:disable Metrics/AbcSize
     @id_domain = id_domain
     @user = user
     @passwd = passwd
@@ -24,7 +24,7 @@ class SecApp < Iaas
     @proxy_port = proxy.at(1)
   end
 
-  def discover(restendpoint, container)
+  def discover(restendpoint, container) # rubocop:disable Metrics/AbcSize
     authcookie = ComputeBase.new
     authcookie = authcookie.authenticate(@id_domain, @user, @passwd, restendpoint)
     url = restendpoint + '/secapplication/Compute-' + @id_domain + container
@@ -38,7 +38,7 @@ class SecApp < Iaas
     http.request(request)
   end
 
-  def list(restendpoint, secapp)
+  def list(restendpoint, secapp) # rubocop:disable Metrics/AbcSize
     authcookie = ComputeBase.new
     authcookie = authcookie.authenticate(@id_domain, @user, @passwd, restendpoint)
     url = restendpoint + '/secapplication/Compute-' + @id_domain + '/?name=' + secapp
@@ -52,7 +52,7 @@ class SecApp < Iaas
     http.request(request)
   end
 
-  def modify(restendpoint, action, *data)
+  def modify(restendpoint, action, *data) # rubocop:disable Metrics/AbcSize
     data_hash = data.at(0) if data.is_a?(Array)
     data_hash = data if data.is_a?(String)  # this tests if there are extra [] in the JSON
     authcookie = ComputeBase.new

@@ -14,7 +14,7 @@
 # limitations under the License.
 #
 class BlockStorage < Iaas
-  def initialize(id_domain, user, passwd)
+  def initialize(id_domain, user, passwd) # rubocop:disable Metrics/AbcSize
     @id_domain = id_domain
     @user = user
     @passwd = passwd
@@ -24,7 +24,7 @@ class BlockStorage < Iaas
     @proxy_port = proxy.at(1)
   end
 
-  def list(restendpoint, container, action)
+  def list(restendpoint, container, action) # rubocop:disable Metrics/AbcSize
     authcookie = ComputeBase.new
     authcookie = authcookie.authenticate(@id_domain, @user, @passwd, restendpoint)
     url = restendpoint + '/storage/volume' + container
@@ -39,7 +39,7 @@ class BlockStorage < Iaas
     http.request(request)
   end # end or method
 
-  def update(restendpoint, action, *data)
+  def update(restendpoint, action, *data) # rubocop:disable Metrics/AbcSize
     data_hash = data.at(0)
     authcookie = ComputeBase.new
     authcookie = authcookie.authenticate(@id_domain, @user, @passwd, restendpoint)
@@ -53,11 +53,11 @@ class BlockStorage < Iaas
     request.add_field 'Content-type', 'application/oracle-compute-v3+json'
     request.add_field 'accept', 'application/oracle-compute-v3+json'
     request.add_field 'Cookie', authcookie
-    response = http.request(request, data_hash.to_json) unless action == 'delete'
-    response = http.request(request) if action == 'delete'
+    return http.request(request, data_hash.to_json) unless action == 'delete'
+    return http.request(request) if action == 'delete'
   end # end or method
 
-  def attach(restendpoint, action, *data)
+  def attach(restendpoint, action, *data) # rubocop:disable Metrics/AbcSize
     data_hash = data.at(0)
     authcookie = ComputeBase.new
     authcookie = authcookie.authenticate(@id_domain, @user, @passwd, restendpoint)
@@ -71,7 +71,7 @@ class BlockStorage < Iaas
     request.add_field 'Content-type', 'application/oracle-compute-v3+json'
     request.add_field 'accept', 'application/oracle-compute-v3+json'
     request.add_field 'Cookie', authcookie
-    response = http.request(request, data_hash.to_json) unless action == 'delete'
-    response = http.request(request) if action == 'delete'
+    return http.request(request, data_hash.to_json) unless action == 'delete'
+    return http.request(request) if action == 'delete'
   end # end or method
 end

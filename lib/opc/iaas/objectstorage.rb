@@ -14,7 +14,7 @@
 # limitations under the License.
 #
 class ObjectStorage < Iaas
-  def initialize(id_domain, user, passwd)
+  def initialize(id_domain, user, passwd) # rubocop:disable Metrics/AbcSize
     @id_domain = id_domain
     @user = user
     @passwd = passwd
@@ -22,11 +22,13 @@ class ObjectStorage < Iaas
     proxy = proxy.proxy
     @proxy_addr = proxy.at(0)
     @proxy_port = proxy.at(1)
+    @url = 'https://' + @id_domain + '.storage.oraclecloud.com/auth/v1.0'
   end
 
-  def build_token
-    url = 'https://storage.us2.oraclecloud.com/auth/v1.0'
-    uri = URI.parse(url)
+  attr_writer :url 
+
+  def build_token # rubocop:disable Metrics/AbcSize
+    uri = URI.parse(@url)
     http = Net::HTTP.new(uri.host, uri.port, @proxy_addr, @proxy_port)   # Creates a http object
     http.use_ssl = true    # When using https
     http.verify_mode = OpenSSL::SSL::VERIFY_NONE
@@ -41,7 +43,7 @@ class ObjectStorage < Iaas
     end # end of if
   end # end of method
 
-  def create(container)
+  def create(container) # rubocop:disable Metrics/AbcSize
     tokens = build_token
     if !tokens.is_a?(Array)
       return tokens
@@ -59,7 +61,7 @@ class ObjectStorage < Iaas
     end # end of if
   end  # end of method
 
-  def list
+  def list # rubocop:disable Metrics/AbcSize
     tokens = build_token
     if !tokens.is_a?(Array)
       return tokens
@@ -77,7 +79,7 @@ class ObjectStorage < Iaas
     end # end of if
   end  # end of method
 
-  def contents(container)
+  def contents(container) # rubocop:disable Metrics/AbcSize
     tokens = build_token
     if !tokens.is_a?(Array)
       return tokens
@@ -96,7 +98,7 @@ class ObjectStorage < Iaas
     # end of if
   end  # end of method
 
-  def delete(container)
+  def delete(container) # rubocop:disable Metrics/AbcSize
     tokens = build_token
     if !tokens.is_a?(Array)
       return tokens
@@ -114,7 +116,7 @@ class ObjectStorage < Iaas
     end # end of if
   end  # end of method
 
-  def object_create(local_file_name, container, object_name, file_type)
+  def object_create(local_file_name, container, object_name, file_type) # rubocop:disable Metrics/AbcSize
     require 'net/http/post/multipart'
     tokens = build_token
     if !tokens.is_a?(Array)

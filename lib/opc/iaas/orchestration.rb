@@ -14,7 +14,7 @@
 # limitations under the License.
 #
 class Orchestration < Iaas
-  def initialize(id_domain, user, passwd)
+  def initialize(id_domain, user, passwd) # rubocop:disable Metrics/AbcSize
     @id_domain = id_domain
     @user = user
     @passwd = passwd
@@ -24,7 +24,7 @@ class Orchestration < Iaas
     @proxy_port = proxy.at(1)
   end
 
-  def list(restendpoint, container, action)
+  def list(restendpoint, container, action) # rubocop:disable Metrics/AbcSize
     authcookie = ComputeBase.new
     authcookie = authcookie.authenticate(@id_domain, @user, @passwd, restendpoint)
     url = restendpoint + '/orchestration' + container
@@ -39,14 +39,14 @@ class Orchestration < Iaas
     http.request(request)
   end # end or method
 
-  def update(restendpoint, action, *data)
+  def update(restendpoint, action, *data) # rubocop:disable Metrics/AbcSize
     data_hash = data.at(0)
     authcookie = ComputeBase.new
     authcookie = authcookie.authenticate(@id_domain, @user, @passwd, restendpoint)
     name = data_hash['name'] if action == 'update'
     url = restendpoint + '/orchestration/' if action == 'create'
-    url = restendpoint + '/orchestration'  + name if action == 'update'
-    url = restendpoint + '/orchestration'  + data_hash if action == 'delete'
+    url = restendpoint + '/orchestration' + name if action == 'update'
+    url = restendpoint + '/orchestration' + data_hash if action == 'delete'
     uri = URI.parse(url)
     http = Net::HTTP.new(uri.host, uri.port, @proxy_addr, @proxy_port)   # Creates a http object
     http.use_ssl = true    # When using https
@@ -61,8 +61,8 @@ class Orchestration < Iaas
     response = http.request(request) if action == 'delete'
     return response
   end # end or method
-  
-  def manage(restendpoint, action, launchplan)
+
+  def manage(restendpoint, action, launchplan) # rubocop:disable Metrics/AbcSize
     # data_hash = data.at(0)
     authcookie = ComputeBase.new
     authcookie = authcookie.authenticate(@id_domain, @user, @passwd, restendpoint)
@@ -71,10 +71,10 @@ class Orchestration < Iaas
     http = Net::HTTP.new(uri.host, uri.port, @proxy_addr, @proxy_port)   # Creates a http object
     http.use_ssl = true    # When using https
     http.verify_mode = OpenSSL::SSL::VERIFY_NONE
-    request = Net::HTTP::Put.new(uri.request_uri) 
+    request = Net::HTTP::Put.new(uri.request_uri)
     request.add_field 'Content-type', 'application/oracle-compute-v3+json'
     request.add_field 'accept', 'application/oracle-compute-v3+json'
     request.add_field 'Cookie', authcookie
-    response = http.request(request)
+    http.request(request)
   end # end or method
 end

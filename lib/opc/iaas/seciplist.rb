@@ -24,7 +24,7 @@ class SecIPList < Iaas
     @proxy_port = proxy.at(1)
   end
   
-  def list(restendpoint, container, action)
+  def list(restendpoint, container, action) # rubocop:disable Metrics/AbcSize
     authcookie = ComputeBase.new
     authcookie = authcookie.authenticate(@id_domain, @user, @passwd, restendpoint)
     url = restendpoint + '/seciplist/Compute-' + @id_domain + container
@@ -39,7 +39,7 @@ class SecIPList < Iaas
     http.request(request)
   end # end or method
 
-  def discover(restendpoint, container, action)
+  def discover(restendpoint, container, action) # rubocop:disable Metrics/AbcSize
     authcookie = ComputeBase.new
     authcookie = authcookie.authenticate(@id_domain, @user, @passwd, restendpoint)
     url = restendpoint + '/seciplist/Compute-' + @id_domain + container
@@ -54,7 +54,7 @@ class SecIPList < Iaas
     http.request(request)
   end # end or method
 
-  def update(restendpoint, seciplist, action, *data)
+  def update(restendpoint, seciplist, action, *data) # rubocop:disable Metrics/AbcSize
     data_hash = data.at(0)
     authcookie = ComputeBase.new
     authcookie = authcookie.authenticate(@id_domain, @user, @passwd, restendpoint)

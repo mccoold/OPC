@@ -24,7 +24,7 @@ class LaunchPlan < Iaas
     @proxy_port = proxy.at(1)
   end
 
-  def launch(restendpoint, *data)
+  def launch(restendpoint, *data) # rubocop:disable Metrics/AbcSize
     data_hash = data.at(0)
     authcookie = ComputeBase.new
     authcookie = authcookie.authenticate(@id_domain, @user, @passwd, restendpoint)
@@ -37,6 +37,6 @@ class LaunchPlan < Iaas
     request.add_field 'Content-type', 'application/oracle-compute-v3+json'
     request.add_field 'accept', 'application/oracle-compute-v3+json'
     request.add_field 'Cookie', authcookie
-    response = http.request(request, data_hash.to_json) 
+    http.request(request, data_hash.to_json)
   end # end or method
 end

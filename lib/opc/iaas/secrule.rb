@@ -14,7 +14,7 @@
 # limitations under the License.
 #
 class SecRule < Iaas
-  def initialize(id_domain, user, passwd)
+  def initialize(id_domain, user, passwd) # rubocop:disable Metrics/AbcSize
     @id_domain = id_domain
     @user = user
     @passwd = passwd
@@ -24,7 +24,7 @@ class SecRule < Iaas
     @proxy_port = proxy.at(1)
   end
 
-  def discover(restendpoint, container, action)
+  def discover(restendpoint, container, action) # rubocop:disable Metrics/AbcSize
     authcookie = ComputeBase.new
     authcookie = authcookie.authenticate(@id_domain, @user, @passwd, restendpoint)
     url = restendpoint + '/secrule/Compute-' + @id_domain + container
@@ -39,7 +39,7 @@ class SecRule < Iaas
     http.request(request)
   end # end or method
 
-  def list(restendpoint, secrule)
+  def list(restendpoint, secrule) # rubocop:disable Metrics/AbcSize
     authcookie = ComputeBase.new
     authcookie = authcookie.authenticate(@id_domain, @user, @passwd, restendpoint)
     url = restendpoint + '/secrule/Compute-' + @id_domain + '/?name=' + secrule
@@ -53,12 +53,12 @@ class SecRule < Iaas
     http.request(request)
   end # end or method
 
-  def update(restendpoint, secrule, action, *data)
+  def update(restendpoint, secrule, action, *data) # rubocop:disable Metrics/AbcSize
     data_hash = data.at(0)
     authcookie = ComputeBase.new
     authcookie = authcookie.authenticate(@id_domain, @user, @passwd, restendpoint)
     url = restendpoint + '/secrule' + secrule if action == 'update' || action == 'delete'
-    url = restendpoint + '/secrule/' if action == 'create' 
+    url = restendpoint + '/secrule/' if action == 'create'
     uri = URI.parse(url)
     http = Net::HTTP.new(uri.host, uri.port, @proxy_addr, @proxy_port)   # Creates a http object
     http.use_ssl = true    # When using https

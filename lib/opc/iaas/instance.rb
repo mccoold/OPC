@@ -23,8 +23,8 @@ class Instance < Iaas
     @proxy_addr = proxy.at(0)
     @proxy_port = proxy.at(1)
   end
-  
-  def list(restendpoint, container)
+
+  def list(restendpoint, container) # rubocop:disable Metrics/AbcSize
     authcookie = ComputeBase.new
     authcookie = authcookie.authenticate(@id_domain, @user, @passwd, restendpoint)
     url = restendpoint + '/instance/Compute-' + @id_domain + '/' + container
@@ -37,8 +37,8 @@ class Instance < Iaas
     request.add_field 'Cookie', authcookie
     http.request(request)
   end
-  
-  def delete(restendpoint, instance)
+
+  def delete(restendpoint, instance) # rubocop:disable Metrics/AbcSize
     authcookie = ComputeBase.new
     authcookie = authcookie.authenticate(@id_domain, @user, @passwd, restendpoint)
     url = restendpoint + '/instance/Compute-' + @id_domain + '/' + instance

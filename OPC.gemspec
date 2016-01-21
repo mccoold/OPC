@@ -1,6 +1,6 @@
 Gem::Specification.new do |s|
   s.name = 'OPC'
-  s.version = '0.2.2'
+  s.version = '0.2.5'
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ['Daryn McCool']
   s.date = Date.today.to_s
@@ -11,7 +11,7 @@ Gem::Specification.new do |s|
   s.required_ruby_version = '>= 1.8'
   s.require_paths = ['lib']
   s.rubygems_version = '1.6.2'
-  s.summary = 'OPC'
+  s.summary = 'Oracle Public Cloud REST API for Ruby'
   s.license = 'Apache-2.0'
   if s.respond_to? :specification_version
     s.specification_version = 3

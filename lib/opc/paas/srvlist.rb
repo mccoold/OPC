@@ -27,7 +27,7 @@ class SrvList < Paas
     @url = 'https://jaas.oraclecloud.com/paas/service/soa/api/v1.1/instances/' + @id_domain  if service == 'soa'
   end
 
-  attr_writer :url
+  attr_writer :url, :server_name
 
   def service_list
     # list all instances in an account
@@ -41,7 +41,7 @@ class SrvList < Paas
     http.request(request)
   end # end method servicelist
 
-  def inst_list(service, inst_id)
+  def inst_list(inst_id)
     # provides details on an instance
     uri = URI.parse(@url + '/' + inst_id) 
     http = Net::HTTP.new(uri.host, uri.port, @proxy_addr, @proxy_port)
@@ -55,7 +55,8 @@ class SrvList < Paas
 
   def managed_list(inst_id)
     # provides details on an instance
-    uri = URI.parse(@url + "/#{inst_id}/servers")
+    uri = URI.parse(@url + "/#{inst_id}/servers") unless @server_name
+    uri = URI.parse(@url + "/#{inst_id}/servers/" + @server_name) if @server_name
     http = Net::HTTP.new(uri.host, uri.port, @proxy_addr, @proxy_port)
     http.use_ssl = true
     http.verify_mode = OpenSSL::SSL::VERIFY_NONE

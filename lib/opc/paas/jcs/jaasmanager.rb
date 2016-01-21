@@ -43,17 +43,23 @@ class JaasManager < Jcs
     request.add_field 'X-ID-TENANT-NAME', @id_domain
     http.request(request, config.to_json)
   end   # end method stop
-
+  
+  attr_writer :update_json
+  
   def scale_up(inst_id, cluster_id)
-    url = @url + @id_domain + '/' + inst_id + '/servers/' + cluster_id
+    url = @url + @id_domain + '/' + inst_id + '/servers/' + cluster_id + '?createCluserIfMissing=true' unless @update_json
+    url = @url + @id_domain + '/' + inst_id + '/' + cluster_id if @update_json
     uri = URI.parse(url)
     http = Net::HTTP.new(uri.host, uri.port, @proxy_addr, @proxy_port)
     http.use_ssl = true
     http.verify_mode = OpenSSL::SSL::VERIFY_NONE
-    request = Net::HTTP::Post.new(uri.request_uri)
+    request = Net::HTTP::Post.new(uri.request_uri) unless @update_json
+    request = Net::HTTP::Put.new(uri.request_uri) if @update_json
     request.basic_auth @user, @passwd
     request.add_field 'X-ID-TENANT-NAME', @id_domain
-    http.request(request)
+    request.add_field 'Content-Type', 'application/json' if @update_json
+    return http.request(request) unless @update_json
+    return http.request(request, @update_json.to_json) if @update_json
   end # end of method
 
   def scale_in(inst_id, server_id)

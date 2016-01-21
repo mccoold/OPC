@@ -22,6 +22,7 @@ class BackUpManager < Jcs
     proxy = proxy.proxy
     @proxy_addr = proxy.at(0)
     @proxy_port = proxy.at(1)
+    @url = 'https://jaas.oraclecloud.com/paas/service/jcs/api/v1.1/instances/'
   end
   
   attr_writer :url

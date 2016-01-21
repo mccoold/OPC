@@ -14,7 +14,7 @@
 # limitations under the License.
 #
 class ComputeBase < Iaas
-  def authenticate(id_domain, user, passwd, restendpoint)
+  def authenticate(id_domain, user, passwd, restendpoint) # rubocop:disable Metrics/AbcSize
     url = restendpoint + '/authenticate/'
     uri = URI.parse(url)
     http = Net::HTTP.new(uri.host, uri.port, @proxy_addr, @proxy_port)   # Creates a http object

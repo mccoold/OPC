@@ -14,7 +14,7 @@
 # limitations under the License.
 #
 class IPUtil < Iaas
-  def initialize(id_domain, user, passwd)
+  def initialize(id_domain, user, passwd) # rubocop:disable Metrics/AbcSize
     @id_domain = id_domain
     @user = user
     @passwd = passwd
@@ -24,7 +24,7 @@ class IPUtil < Iaas
     @proxy_port = proxy.at(1)
   end
 
-  def list(restendpoint, container, action, function)
+  def list(restendpoint, container, action, function) # rubocop:disable Metrics/AbcSize
     authcookie = ComputeBase.new
     authcookie = authcookie.authenticate(@id_domain, @user, @passwd, restendpoint)
     url = restendpoint + '/ip/' + function + '/Compute-' + @id_domain + container
@@ -39,7 +39,7 @@ class IPUtil < Iaas
     http.request(request)
   end # end or method
 
-  def discover(restendpoint, container, action, function)
+  def discover(restendpoint, container, action, function) # rubocop:disable Metrics/AbcSize
     authcookie = ComputeBase.new
     authcookie = authcookie.authenticate(@id_domain, @user, @passwd, restendpoint)
     url = restendpoint + '/ip/' + function + '/Compute-' + @id_domain + container
@@ -54,11 +54,11 @@ class IPUtil < Iaas
     http.request(request)
   end # end or method
 
-  def update(restendpoint, ip, action, function, *data)
+  def update(restendpoint, ip, action, function, *data) # rubocop:disable Metrics/AbcSize
     data_hash = data.at(0)
     authcookie = ComputeBase.new
     authcookie = authcookie.authenticate(@id_domain, @user, @passwd, restendpoint)
-    url = restendpoint + '/ip/' + function + ip if action == 'update'  || action == 'delete'
+    url = restendpoint + '/ip/' + function + ip if action == 'update' || action == 'delete'
     url = restendpoint + '/ip/' + function + '/' if action == 'create'
     uri = URI.parse(url)
     http = Net::HTTP.new(uri.host, uri.port, @proxy_addr, @proxy_port)   # Creates a http object
