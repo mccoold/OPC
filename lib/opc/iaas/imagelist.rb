@@ -14,7 +14,7 @@
 # limitations under the License.
 #
 class ImageList < Iaas
-  def initialize(id_domain, user, passwd)
+  def initialize(id_domain, user, passwd, restendpoint)
     @id_domain = id_domain
     @user = user
     @passwd = passwd
@@ -22,12 +22,13 @@ class ImageList < Iaas
     proxy = proxy.proxy
     @proxy_addr = proxy.at(0)
     @proxy_port = proxy.at(1)
+    @restendpoint = restendpoint
   end
- 
-  def list(restendpoint, container) # rubocop:disable Metrics/AbcSize
+
+  def list(container) # rubocop:disable Metrics/AbcSize
     authcookie = ComputeBase.new
-    authcookie = authcookie.authenticate(@id_domain, @user, @passwd, restendpoint)
-    url = restendpoint + '/imagelist' + container
+    authcookie = authcookie.authenticate(@id_domain, @user, @passwd, @restendpoint)
+    url = @restendpoint + '/imagelist' + container
     uri = URI.parse(url)
     http = Net::HTTP.new(uri.host, uri.port, @proxy_addr, @proxy_port)   # Creates a http object
     http.use_ssl = true    # When using https
@@ -36,5 +37,19 @@ class ImageList < Iaas
     request.add_field 'accept', 'application/oracle-compute-v3+directory+json'
     request.add_field 'Cookie', authcookie
     http.request(request)
+  end
+
+  def create(create_data) # rubocop:disable Metrics/AbcSize
+    authcookie = ComputeBase.new
+    authcookie = authcookie.authenticate(@id_domain, @user, @passwd, @restendpoint)
+    url = @restendpoint + '/imagelist'
+    uri = URI.parse(url)
+    http = Net::HTTP.new(uri.host, uri.port, @proxy_addr, @proxy_port)   # Creates a http object
+    http.use_ssl = true    # When using https
+    http.verify_mode = OpenSSL::SSL::VERIFY_NONE
+    request = Net::HTTP::Post.new(uri.request_uri)
+    # request.add_field 'accept', 'application/oracle-compute-v3+directory+json'
+    request.add_field 'Cookie', authcookie
+    http.request(request, create_data.to_json)
   end
 end

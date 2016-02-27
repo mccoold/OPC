@@ -14,7 +14,7 @@
 # limitations under the License.
 #
 class BackUpManager < Jcs
-  def initialize(id_domain, user, passwd)
+  def initialize(id_domain, user, passwd) # rubocop:disable Metrics/AbcSize
     @id_domain = id_domain
     @user = user
     @passwd = passwd
@@ -24,10 +24,10 @@ class BackUpManager < Jcs
     @proxy_port = proxy.at(1)
     @url = 'https://jaas.oraclecloud.com/paas/service/jcs/api/v1.1/instances/'
   end
-  
+
   attr_writer :url
-  
-  def config_list(inst_id)
+
+  def config_list(inst_id) # rubocop:disable Metrics/AbcSize
     # list all instances in an account
     uri = URI.parse(@url + "/#{inst_id}/backupconfig")
     http = Net::HTTP.new(uri.host, uri.port, @proxy_addr, @proxy_port)
@@ -39,7 +39,7 @@ class BackUpManager < Jcs
     http.request(request)
   end # end method backuplist
 
-  def config(data, inst_id)
+  def config(data, inst_id) # rubocop:disable Metrics/AbcSize
     # updates config
     uri = URI.parse(@url + @id_domain + "/#{inst_id}/backupconfig")
     http = Net::HTTP.new(uri.host, uri.port, @proxy_addr, @proxy_port)
@@ -52,7 +52,7 @@ class BackUpManager < Jcs
     http.request(request, data.to_json)
   end # end method backuplist
 
-  def initialize_backup(data, inst_id)
+  def initialize_backup(data, inst_id) # rubocop:disable Metrics/AbcSize
     # list all instances in an account
     uri = URI.parse(@url + @id_domain + "/#{inst_id}/backups")
     http = Net::HTTP.new(uri.host, uri.port, @proxy_addr, @proxy_port)
@@ -65,7 +65,7 @@ class BackUpManager < Jcs
     http.request(request, data.to_json)
   end # end method initialize
 
-  def list(inst_id, backup_id)
+  def list(inst_id, backup_id) # rubocop:disable Metrics/AbcSize
     # list all backups in an account
     if !backup_id.nil?
       uri = URI.parse(@url + "/#{inst_id}/backups/#{backup_id}")

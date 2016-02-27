@@ -14,7 +14,7 @@
 # limitations under the License.
 #
 class Orchestration < Iaas
-  def initialize(id_domain, user, passwd) # rubocop:disable Metrics/AbcSize
+  def initialize(id_domain, user, passwd, restendpoint) # rubocop:disable Metrics/AbcSize
     @id_domain = id_domain
     @user = user
     @passwd = passwd
@@ -22,12 +22,13 @@ class Orchestration < Iaas
     proxy = proxy.proxy
     @proxy_addr = proxy.at(0)
     @proxy_port = proxy.at(1)
+    @restendpoint = restendpoint
   end
 
-  def list(restendpoint, container, action) # rubocop:disable Metrics/AbcSize
+  def list(container, action) # rubocop:disable Metrics/AbcSize
     authcookie = ComputeBase.new
-    authcookie = authcookie.authenticate(@id_domain, @user, @passwd, restendpoint)
-    url = restendpoint + '/orchestration' + container
+    authcookie = authcookie.authenticate(@id_domain, @user, @passwd, @restendpoint)
+    url = @restendpoint + '/orchestration' + container
     uri = URI.parse(url)
     http = Net::HTTP.new(uri.host, uri.port, @proxy_addr, @proxy_port)   # Creates a http object
     http.use_ssl = true    # When using https
@@ -39,14 +40,14 @@ class Orchestration < Iaas
     http.request(request)
   end # end or method
 
-  def update(restendpoint, action, *data) # rubocop:disable Metrics/AbcSize
-    data_hash = data.at(0)
+  attr_writer :create_json, :container
+
+  def update(action) # rubocop:disable Metrics/AbcSize
     authcookie = ComputeBase.new
-    authcookie = authcookie.authenticate(@id_domain, @user, @passwd, restendpoint)
-    name = data_hash['name'] if action == 'update'
-    url = restendpoint + '/orchestration/' if action == 'create'
-    url = restendpoint + '/orchestration' + name if action == 'update'
-    url = restendpoint + '/orchestration' + data_hash if action == 'delete'
+    authcookie = authcookie.authenticate(@id_domain, @user, @passwd, @restendpoint)
+    url = @restendpoint + '/orchestration/' if action == 'create'
+    url = @restendpoint + '/orchestration' + name if action == 'update'
+    url = @restendpoint + '/orchestration' + @container if action == 'delete'
     uri = URI.parse(url)
     http = Net::HTTP.new(uri.host, uri.port, @proxy_addr, @proxy_port)   # Creates a http object
     http.use_ssl = true    # When using https
@@ -57,16 +58,15 @@ class Orchestration < Iaas
     request.add_field 'Content-type', 'application/oracle-compute-v3+json'
     request.add_field 'accept', 'application/oracle-compute-v3+json'
     request.add_field 'Cookie', authcookie
-    response = http.request(request, data_hash.to_json) unless action == 'delete'
+    response = http.request(request, @create_json.to_json) unless action == 'delete'
     response = http.request(request) if action == 'delete'
     return response
   end # end or method
 
-  def manage(restendpoint, action, launchplan) # rubocop:disable Metrics/AbcSize
-    # data_hash = data.at(0)
+  def manage(action, launchplan) # rubocop:disable Metrics/AbcSize
     authcookie = ComputeBase.new
-    authcookie = authcookie.authenticate(@id_domain, @user, @passwd, restendpoint)
-    url = restendpoint + '/orchestration/' + launchplan + '?action=' + action
+    authcookie = authcookie.authenticate(@id_domain, @user, @passwd, @restendpoint)
+    url = @restendpoint + '/orchestration' + launchplan + '?action=' + action
     uri = URI.parse(url)
     http = Net::HTTP.new(uri.host, uri.port, @proxy_addr, @proxy_port)   # Creates a http object
     http.use_ssl = true    # When using https

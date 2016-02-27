@@ -13,8 +13,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-class IPUtil < Iaas
-  def initialize(id_domain, user, passwd, restendpoint) # rubocop:disable Metrics/AbcSize
+class MachineImage < Iaas
+  def initialize(id_domain, user, passwd, restendpoint)
     @id_domain = id_domain
     @user = user
     @passwd = passwd
@@ -25,52 +25,33 @@ class IPUtil < Iaas
     @restendpoint = restendpoint
   end
 
-  attr_writer :create_json, :ipcontainer_name
-  def list(container, action, function) # rubocop:disable Metrics/AbcSize
+  def list(container, action) # rubocop:disable Metrics/AbcSize
     authcookie = ComputeBase.new
     authcookie = authcookie.authenticate(@id_domain, @user, @passwd, @restendpoint)
-    url = @restendpoint + '/ip/' + function + container
+    url = @restendpoint + '/machineimage' + container
     uri = URI.parse(url)
     http = Net::HTTP.new(uri.host, uri.port, @proxy_addr, @proxy_port)   # Creates a http object
     http.use_ssl = true    # When using https
     http.verify_mode = OpenSSL::SSL::VERIFY_NONE
     request = Net::HTTP::Get.new(uri.request_uri)
-    request.add_field 'accept', 'application/oracle-compute-v3+json' if action == 'details'
     request.add_field 'accept', 'application/oracle-compute-v3+directory+json' if action == 'list'
+    request.add_field 'accept', 'application/oracle-compute-v3+json' if action == 'details'
     request.add_field 'Cookie', authcookie
     http.request(request)
-  end # end or method
+  end
 
-  def discover(container, qparam, qvalue, function) # rubocop:disable Metrics/AbcSize
+  def create(create_data) # rubocop:disable Metrics/AbcSize
     authcookie = ComputeBase.new
     authcookie = authcookie.authenticate(@id_domain, @user, @passwd, @restendpoint)
-    url = @restendpoint + '/ip/' + function + container + '?' + qparam + '=' + qvalue
+    url = @restendpoint + '/machineimage/'
     uri = URI.parse(url)
     http = Net::HTTP.new(uri.host, uri.port, @proxy_addr, @proxy_port)   # Creates a http object
     http.use_ssl = true    # When using https
     http.verify_mode = OpenSSL::SSL::VERIFY_NONE
-    request = Net::HTTP::Get.new(uri.request_uri)
+    request = Net::HTTP::Post.new(uri.request_uri)
     request.add_field 'accept', 'application/oracle-compute-v3+json'
-    request.add_field 'Cookie', authcookie
-    http.request(request)
-  end # end or method
-
-  def update(action, function) # rubocop:disable Metrics/AbcSize
-    authcookie = ComputeBase.new
-    authcookie = authcookie.authenticate(@id_domain, @user, @passwd, @restendpoint)
-    url = @restendpoint + '/ip/' + function + @ipcontainer_name if action == 'update' || action == 'delete'
-    url = @restendpoint + '/ip/' + function + '/' if action == 'create'
-    uri = URI.parse(url)
-    http = Net::HTTP.new(uri.host, uri.port, @proxy_addr, @proxy_port)   # Creates a http object
-    http.use_ssl = true    # When using https
-    http.verify_mode = OpenSSL::SSL::VERIFY_NONE
-    request = Net::HTTP::Put.new(uri.request_uri) if action == 'update'
-    request = Net::HTTP::Post.new(uri.request_uri) if action == 'create'
-    request = Net::HTTP::Delete.new(uri.request_uri) if action == 'delete'
     request.add_field 'Content-type', 'application/oracle-compute-v3+json'
-    request.add_field 'accept', 'application/oracle-compute-v3+json'
     request.add_field 'Cookie', authcookie
-    return  http.request(request, @create_json.to_json) unless action == 'delete'
-    return  http.request(request) if action == 'delete'
-  end # end or method
+    http.request(request, create_data.to_json)
+  end
 end

@@ -14,7 +14,7 @@
 # limitations under the License.
 #
 class InstDelete < Paas
-  def initialize(id_domain, user, passwd, service)
+  def initialize(id_domain, user, passwd, service) # rubocop:disable Metrics/AbcSize
     @service = service
     @id_domain = id_domain
     @user = user
@@ -29,8 +29,8 @@ class InstDelete < Paas
   end
 
   attr_writer :url
-  
-  def delete(data, inst_id)
+
+  def delete(data, inst_id) # rubocop:disable Metrics/AbcSize
     uri = URI.parse(@url + "/#{inst_id}")
     http = Net::HTTP.new(uri.host, uri.port, @proxy_addr, @proxy_port)
     http.use_ssl = true

@@ -24,10 +24,10 @@ class DataGrid < Jcs
     @proxy_port = proxy.at(1)
     @url = 'https://jaas.oraclecloud.com/paas/service/jcs/api/v1.1/instances/'
   end
-  
+
   attr_writer :url
-  
-  def create(inst_id, data)
+
+  def create(inst_id, data) # rubocop:disable Metrics/AbcSize
     url =  @url + @id_domain + "/#{inst_id}/clusters"
     uri = URI.parse(url)
     http = Net::HTTP.new(uri.host, uri.port, @proxy_addr, @proxy_port) # Creates a http object
@@ -41,7 +41,7 @@ class DataGrid < Jcs
   end   # end method create
 
   def list
-    url = @url + @id_domain + "/config/scalingUnits/defaultScalingUnits"
+    url = @url + @id_domain + '/config/scalingUnits/defaultScalingUnits'
     uri = URI.parse(url)
     http = Net::HTTP.new(uri.host, uri.port, @proxy_addr, @proxy_port) # Creates a http object
     http.use_ssl = true     # When using https
@@ -53,7 +53,7 @@ class DataGrid < Jcs
     http.request(request)
   end   # end method list
 
-  def delete(inst_id, cluster_id, action, scalingunit)
+  def delete(inst_id, cluster_id, action, scalingunit) # rubocop:disable Metrics/AbcSize
     url = @url + @id_domain + "/#{inst_id}/clusters/#{cluster_id}" if action == 'cluster'
     url = @url + @id_domain + "/#{inst_id}/clusters/#{cluster_id}/units/#{scalingunit}" if action == 'instance'
     uri = URI.parse(url)

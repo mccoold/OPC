@@ -25,13 +25,13 @@ class JaasManager < Jcs
     @timeout = '10'
   end
 
-  attr_writer :url, :timeout
+  attr_writer :url, :timeout, :update_json
 
-  def mngstate(inst_id, action)
+  def mngstate(inst_id, action) # rubocop:disable Metrics/AbcSize
     config = {
       'lifecycleState'   => action,
       'lifecycleTimeout' => @timeout
-             }
+    }
     url =  @url + @id_domain + '/' + inst_id
     uri = URI.parse(url)
     http = Net::HTTP.new(uri.host, uri.port, @proxy_addr, @proxy_port)   # Creates a http object
@@ -43,10 +43,8 @@ class JaasManager < Jcs
     request.add_field 'X-ID-TENANT-NAME', @id_domain
     http.request(request, config.to_json)
   end   # end method stop
-  
-  attr_writer :update_json
-  
-  def scale_up(inst_id, cluster_id)
+
+  def scale_up(inst_id, cluster_id) # rubocop:disable Metrics/AbcSize
     url = @url + @id_domain + '/' + inst_id + '/servers/' + cluster_id + '?createCluserIfMissing=true' unless @update_json
     url = @url + @id_domain + '/' + inst_id + '/' + cluster_id if @update_json
     uri = URI.parse(url)

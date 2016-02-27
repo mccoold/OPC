@@ -14,7 +14,7 @@
 # limitations under the License.class OPC
 #
 class InstCreate < Paas
-  def initialize(id_domain, user, passwd, service)
+  def initialize(id_domain, user, passwd, service) # rubocop:disable Metrics/AbcSize
     @service = service
     @id_domain = id_domain
     @user = user
@@ -23,15 +23,16 @@ class InstCreate < Paas
     proxy = proxy.proxy
     @proxy_addr = proxy.at(0)
     @proxy_port = proxy.at(1)
-    abort('you entered an incorrect value for action/service') unless service == 'jcs' || service == 'dbcs' || service == 'soa'
+    message = 'you entered an incorrect value for action/service'
+    abort(message) unless service == 'jcs' || service == 'dbcs' || service == 'soa'
     @url = 'https://jaas.oraclecloud.com/paas/service/jcs/api/v1.1/instances/' + @id_domain if service == 'jcs'
     @url = 'https://jaas.oraclecloud.com/paas/service/soa/api/v1.1/instances/' + @id_domain if service == 'soa'
     @url = 'https://dbaas.oraclecloud.com/paas/service/dbcs/api/v1.1/instances/' + @id_domain if service == 'dbcs'
   end
 
   attr_writer :url, :service
-    
-  def create(create_data)
+
+  def create(create_data) # rubocop:disable Metrics/AbcSize
     uri = URI.parse(@url)
     http = Net::HTTP.new(uri.host, uri.port, @proxy_addr, @proxy_port) # Creates a http object
     http.use_ssl = true     # When using https
@@ -39,7 +40,7 @@ class InstCreate < Paas
     request = Net::HTTP::Post.new(uri.request_uri)
     request.basic_auth @user, @passwd
     request.add_field 'X-ID-TENANT-NAME', @id_domain
-    request.add_field 'Content-Type', 'application/vnd.com.oracle.oracloud.provisioning.Service+json' if @service == 'jcs'  
+    request.add_field 'Content-Type', 'application/vnd.com.oracle.oracloud.provisioning.Service+json' if @service == 'jcs'
     request.add_field 'Content-Type', 'application/json' if @service == 'dbcs' || @service == 'soa'
     http.request(request, create_data.to_json)
   end   # end method create
@@ -52,7 +53,6 @@ class InstCreate < Paas
     request = Net::HTTP::Get.new(uri.request_uri)
     request.basic_auth @user, @passwd
     request.add_field 'X-ID-TENANT-NAME', @id_domain
-    response = http.request(request)
-    response.body
+    http.request(request)
   end
 end   # end of class

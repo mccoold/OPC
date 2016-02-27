@@ -26,7 +26,7 @@ class DbaasManager < Dbcs
   end
   attr_writer :url
 
-  def scale_up(data, inst_id)
+  def scale_up(data, inst_id) # rubocop:disable Metrics/AbcSize
     uri = URI.parse(@url + @id_domain + '/' + inst_id)
     http = Net::HTTP.new(uri.host, uri.port, @proxy_addr, @proxy_port)
     http.use_ssl = true
@@ -35,10 +35,10 @@ class DbaasManager < Dbcs
     request.basic_auth @user, @passwd
     request.add_field 'X-ID-TENANT-NAME', @id_domain
     request.add_field 'Content-Type', 'application/json'
-    response =  http.request(request, data.to_json)
+    http.request(request, data.to_json)
   end # end of method scale up
 
-  def power(inst_id, action)
+  def power(inst_id, action) # rubocop:disable Metrics/AbcSize
     config = {
       'lifecycleState'   => "#{action}"
     }

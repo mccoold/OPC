@@ -24,10 +24,10 @@ class Shape < Iaas
     @proxy_port = proxy.at(1)
   end
 
-  def list(restendpoint) # rubocop:disable Metrics/AbcSize
+  def list(restendpoint, container) # rubocop:disable Metrics/AbcSize
     authcookie = ComputeBase.new
     authcookie = authcookie.authenticate(@id_domain, @user, @passwd, restendpoint)
-    url = restendpoint + '/shape/Compute-' + @id_domain
+    url = restendpoint + '/shape' + container
     uri = URI.parse(url)
     http = Net::HTTP.new(uri.host, uri.port, @proxy_addr, @proxy_port)   # Creates a http object
     http.use_ssl = true    # When using https

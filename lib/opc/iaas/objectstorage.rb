@@ -25,7 +25,7 @@ class ObjectStorage < Iaas
     @url = 'https://' + @id_domain + '.storage.oraclecloud.com/auth/v1.0'
   end
 
-  attr_writer :url 
+  attr_writer :url
 
   def build_token # rubocop:disable Metrics/AbcSize
     uri = URI.parse(@url)
@@ -116,26 +116,21 @@ class ObjectStorage < Iaas
     end # end of if
   end  # end of method
 
-  def object_create(local_file_name, container, object_name, file_type) # rubocop:disable Metrics/AbcSize
-    require 'net/http/post/multipart'
+  def delete_content(container, object) # rubocop:disable Metrics/AbcSize
     tokens = build_token
     if !tokens.is_a?(Array)
       return tokens
     else
       stgurl = tokens.at(0)
-      stgurl = "#{stgurl}/#{container}/#{object_name}"
+      stgurl = "#{stgurl}/#{container}/#{object}"
       stgtkn = tokens.at(1)
       uri = URI.parse(stgurl)
       http = Net::HTTP.new(uri.host, uri.port, @proxy_addr, @proxy_port)   # Creates a http object
-      http.use_ssl = true  # When using https
+      http.use_ssl = true         # When using https
       http.verify_mode = OpenSSL::SSL::VERIFY_NONE
-      File.open(local_file_name) do |f|
-        request = Net::HTTP::Post::Multipart.new uri.path, 'file' => UploadIO.new(f, "#{file_type}")
-        request.add_field 'X-Auth-Token', "#{stgtkn}"
-        request = http.start do |http|
-          http.request(request)
-        end # end of loop for request
-      end # end of file loop
-    end # end of if for tokens
+      request = Net::HTTP::Delete.new(uri.request_uri)
+      request.add_field 'X-Auth-Token', "#{stgtkn}"
+      http.request(request)
+    end # end of if
   end  # end of method
 end # end of class
