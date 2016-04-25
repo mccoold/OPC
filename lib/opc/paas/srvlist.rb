@@ -22,6 +22,7 @@ class SrvList < Paas
     proxy = proxy.proxy
     @proxy_addr = proxy.at(0)
     @proxy_port = proxy.at(1)
+    service = service.downcase
     @url = 'https://jaas.oraclecloud.com/paas/service/jcs/api/v1.1/instances/' + @id_domain if service == 'jcs'
     @url = 'https://dbaas.oraclecloud.com/paas/service/dbcs/api/v1.1/instances/' + @id_domain if service == 'dbcs'
     @url = 'https://jaas.oraclecloud.com/paas/service/soa/api/v1.1/instances/' + @id_domain  if service == 'soa'
@@ -64,7 +65,6 @@ class SrvList < Paas
     request.basic_auth @user, @passwd
     request.add_field 'X-ID-TENANT-NAME', @id_domain
     http.request(request)
-    
   end # end method manlist
 end # end class
 

@@ -42,7 +42,7 @@ class InstDelete < Paas
     request.add_field 'Content-Type', 'application/vnd.com.oracle.oracloud.provisioning.Service+json' if @service == 'jcs'
     request.add_field 'Content-Type', 'application/json' if @service == 'dbcs'
     response =  http.request(request, data.to_json) if @service == 'jcs'
-    response =  http.request(request) if @service == 'dbcs'
+    response =  http.request(request) if @service == 'dbcs' || @service == 'soa'
     return response
   end # end of method delete
 end   # end of class

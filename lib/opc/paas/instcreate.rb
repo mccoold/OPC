@@ -25,6 +25,7 @@ class InstCreate < Paas
     @proxy_port = proxy.at(1)
     message = 'you entered an incorrect value for action/service'
     abort(message) unless service == 'jcs' || service == 'dbcs' || service == 'soa'
+    service = service.downcase
     @url = 'https://jaas.oraclecloud.com/paas/service/jcs/api/v1.1/instances/' + @id_domain if service == 'jcs'
     @url = 'https://jaas.oraclecloud.com/paas/service/soa/api/v1.1/instances/' + @id_domain if service == 'soa'
     @url = 'https://dbaas.oraclecloud.com/paas/service/dbcs/api/v1.1/instances/' + @id_domain if service == 'dbcs'

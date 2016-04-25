@@ -27,7 +27,7 @@ class SecApp < Iaas
   def discover(restendpoint, container) # rubocop:disable Metrics/AbcSize
     authcookie = ComputeBase.new
     authcookie = authcookie.authenticate(@id_domain, @user, @passwd, restendpoint)
-    url = restendpoint + '/secapplication/Compute-' + @id_domain + container
+    url = restendpoint + '/secapplication' + container
     uri = URI.parse(url)
     http = Net::HTTP.new(uri.host, uri.port, @proxy_addr, @proxy_port)   # Creates a http object
     http.use_ssl = true    # When using https

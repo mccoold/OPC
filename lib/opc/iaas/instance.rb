@@ -23,19 +23,22 @@ class Instance < Iaas
     @proxy_addr = proxy.at(0)
     @proxy_port = proxy.at(1)
     @restendpoint = restendpoint
+    @function = '/instance'
   end
+
+attr_writer :function, :machine_image
 
   def list(container, action) # rubocop:disable Metrics/AbcSize
     authcookie = ComputeBase.new
     authcookie = authcookie.authenticate(@id_domain, @user, @passwd, @restendpoint)
-    url = @restendpoint + '/instance' + container
+    url = @restendpoint + @function + container
     uri = URI.parse(url)
     http = Net::HTTP.new(uri.host, uri.port, @proxy_addr, @proxy_port)   # Creates a http object
     http.use_ssl = true    # When using https
     http.verify_mode = OpenSSL::SSL::VERIFY_NONE
     request = Net::HTTP::Get.new(uri.request_uri)
     request.add_field 'accept', 'application/oracle-compute-v3+json' if action == 'details'
-    request.add_field 'accept', 'compute-v3+directory+json' if action == 'list'
+    request.add_field 'accept', 'application/oracle-compute-v3+directory+json' if action == 'list'
     request.add_field 'Cookie', authcookie
     http.request(request)
   end
@@ -43,7 +46,7 @@ class Instance < Iaas
   def delete(instance) # rubocop:disable Metrics/AbcSize
     authcookie = ComputeBase.new
     authcookie = authcookie.authenticate(@id_domain, @user, @passwd, @restendpoint)
-    url = @restendpoint + '/instance' + instance
+    url = @restendpoint + @function + instance
     uri = URI.parse(url)
     http = Net::HTTP.new(uri.host, uri.port, @proxy_addr, @proxy_port)   # Creates a http object
     http.use_ssl = true    # When using https
@@ -53,10 +56,31 @@ class Instance < Iaas
     request.add_field 'Cookie', authcookie
     http.request(request)
   end
+  
+  def create_snap(container) # rubocop:disable Metrics/AbcSize
+    authcookie = ComputeBase.new
+    authcookie = authcookie.authenticate(@id_domain, @user, @passwd, @restendpoint)
+    url = @restendpoint + @function
+    uri = URI.parse(url)
+    #account = '/Compute-' + @id_domain + '/' + @user
+    account = '/Compute-' + @id_domain + '/cloud_storage'
+    create_data = Hash.new
+    create_data = { 'account' => account, 'instance' => container }
+    create_data['machine_image'] = @machine_image if !@machine_image.nil?
+    http = Net::HTTP.new(uri.host, uri.port, @proxy_addr, @proxy_port)   # Creates a http object
+    http.use_ssl = true    # When using https
+    http.verify_mode = OpenSSL::SSL::VERIFY_NONE
+    request = Net::HTTP::Post.new(uri.request_uri)
+    request.add_field 'Cookie', authcookie
+    request.add_field 'Content-type', 'application/oracle-compute-v3+json'
+    # request.add_field 'accept', 'application/oracle-compute-v3+json'
+    http.request(request, create_data.to_json)
+  end
 
   def list_ip(container) # rubocop:disable Metrics/AbcSize
     instance_data = JSON.parse(list(container, 'details').body)
     vcableid = instance_data['vcable_id']
+    abort('Error network configuration is not present') if vcableid.nil?
     internalip = instance_data['ip']
     iputil = IPUtil.new(@id_domain, @user, @passwd, @restendpoint)
     basecontainer = container.split('/')

@@ -8,9 +8,10 @@ class Proxy < Util
              # :windows
              fpath = ENV['HOMEPATH']
              if File.exist?("#{fpath}" + '\opcclientcfg.conf')
-               cfgfile = Hash[*File.read("#{fpath}" + '\opcclientcfg.conf').split(/[= \n]+/)]
-               @proxy_addr = cfgfile['proxy_addr']
-               @proxy_port = cfgfile['proxy_port']
+               @cfgfile = Hash[*File.read("#{fpath}" + '\opcclientcfg.conf').split(/[= \n]+/)]
+               puts @cfgfile['proxy_addr']
+               @proxy_addr = @cfgfile['proxy_addr']
+               @proxy_port = @cfgfile['proxy_port']
              else
                @proxy_addr = nil
                @proxy_port = nil
@@ -21,9 +22,9 @@ class Proxy < Util
              #:linux
              fpath = ENV['HOME']
              if File.exist?("#{fpath}" + '/opcclientcfg.conf')
-               cfgfile = Hash[*File.read("#{fpath}" + '/opcclientcfg.conf').split(/[= \n]+/)]
-               @proxy_addr = cfgfile['proxy_addr']
-               @proxy_port = cfgfile['proxy_port']
+               @cfgfile = Hash[*File.read("#{fpath}" + '/opcclientcfg.conf').split(/[= \n]+/)]
+               @proxy_addr = @cfgfile['proxy_addr']
+               @proxy_port = @cfgfile['proxy_port']
              else
                @proxy_addr = nil
                @proxy_port = nil
@@ -31,9 +32,9 @@ class Proxy < Util
            when /solaris|bsd/
              fpath = ENV['HOME']
              if File.exist?("#{fpath}" + '/opcclientcfg.conf')
-               cfgfile = Hash[*File.read("#{fpath}" + '/opcclientcfg.conf').split(/[= \n]+/)]
-               @proxy_addr = cfgfile['proxy_addr']
-               @proxy_port = cfgfile['proxy_port']
+               @cfgfile = Hash[*File.read("#{fpath}" + '/opcclientcfg.conf').split(/[= \n]+/)]
+               @proxy_addr = @cfgfile['proxy_addr']
+               @proxy_port = @cfgfile['proxy_port']
              else
                @proxy_addr = nil
                @proxy_port = nil
@@ -42,6 +43,8 @@ class Proxy < Util
              fail Error::WebDriverError, "unknown os: #{host_os.inspect}"
            end # end of case
           )
+          
     return @proxy_addr, @proxy_port
   end # end of method
+  attr_reader :cfgfile
 end

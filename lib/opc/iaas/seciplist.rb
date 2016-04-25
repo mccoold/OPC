@@ -27,7 +27,7 @@ class SecIPList < Iaas
   def list(restendpoint, container, action) # rubocop:disable Metrics/AbcSize
     authcookie = ComputeBase.new
     authcookie = authcookie.authenticate(@id_domain, @user, @passwd, restendpoint)
-    url = restendpoint + '/seciplist/Compute-' + @id_domain + container
+    url = restendpoint + '/seciplist' + container
     uri = URI.parse(url)
     http = Net::HTTP.new(uri.host, uri.port, @proxy_addr, @proxy_port)   # Creates a http object
     http.use_ssl = true    # When using https
@@ -42,7 +42,7 @@ class SecIPList < Iaas
   def discover(restendpoint, container, action) # rubocop:disable Metrics/AbcSize
     authcookie = ComputeBase.new
     authcookie = authcookie.authenticate(@id_domain, @user, @passwd, restendpoint)
-    url = restendpoint + '/seciplist/Compute-' + @id_domain + container
+    url = restendpoint + '/seciplist' + container
     uri = URI.parse(url)
     http = Net::HTTP.new(uri.host, uri.port, @proxy_addr, @proxy_port)   # Creates a http object
     http.use_ssl = true    # When using https

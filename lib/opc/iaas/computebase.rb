@@ -29,7 +29,7 @@ class ComputeBase < Iaas
     if response.code == '204'
       response['Set-Cookie']
     else
-      response
+      abort('authentication failed ' + response.body)
     end # end of if
   end # end of authenticate
 end # end of class
