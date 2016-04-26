@@ -34,9 +34,9 @@ class OPC
          # :windows
          fpath = ENV['HOMEPATH']
            if File.exist?("#{fpath}" + '\opcclientcfg.conf')
-             cfgfile = Hash[*File.read("#{fpath}" + '\opcclientcfg.conf').split(/[= \n]+/)]
-             @proxy_addr = cfgfile['proxy_addr']
-             @proxy_port = cfgfile['proxy_port']
+             @cfgfile = Hash[*File.read("#{fpath}" + '\opcclientcfg.conf').split(/[= \n]+/)]
+             @proxy_addr = @cfgfile['proxy_addr']
+             @proxy_port = @cfgfile['proxy_port']
            else
              @proxy_addr = nil
              @proxy_port = nil
@@ -47,9 +47,9 @@ class OPC
          #:linux
          fpath = ENV['HOME']
          if File.exist?("#{fpath}" + '/opcclientcfg.conf')
-           cfgfile = Hash[*File.read("#{fpath}" + '/opcclientcfg.conf').split(/[= \n]+/)]
-           @proxy_addr = cfgfile['proxy_addr']
-           @proxy_port = cfgfile['proxy_port']
+           @cfgfile = Hash[*File.read("#{fpath}" + '/opcclientcfg.conf').split(/[= \n]+/)]
+           @proxy_addr = @cfgfile['proxy_addr']
+           @proxy_port = @cfgfile['proxy_port']
          else
            @proxy_addr = nil
            @proxy_port = nil
@@ -57,9 +57,9 @@ class OPC
        when /solaris|bsd/
          fpath = ENV['HOME']
          if File.exist?("#{fpath}" + '/opcclientcfg.conf')
-           cfgfile = Hash[*File.read("#{fpath}" + '/opcclientcfg.conf').split(/[= \n]+/)]
-           @proxy_addr = cfgfile['proxy_addr']
-           @proxy_port = cfgfile['proxy_port']
+           @cfgfile = Hash[*File.read("#{fpath}" + '/opcclientcfg.conf').split(/[= \n]+/)]
+           @proxy_addr = @cfgfile['proxy_addr']
+           @proxy_port = @cfgfile['proxy_port']
          else
            @proxy_addr = nil
            @proxy_port = nil
@@ -69,5 +69,6 @@ class OPC
        end # end of case
       )
   end # end of method
+  attr_reader :cfgfile
 end # end of class
 
