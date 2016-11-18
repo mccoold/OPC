@@ -14,6 +14,7 @@
 # limitations under the License.
 #
 class ComputeBase < Iaas
+  # creates the user token for nimbula IaaS authtentication, can not be used for PaaS or Object Storage
   def authenticate(id_domain, user, passwd, restendpoint) # rubocop:disable Metrics/AbcSize
     url = restendpoint + '/authenticate/'
     uri = URI.parse(url)
@@ -30,6 +31,6 @@ class ComputeBase < Iaas
       response['Set-Cookie']
     else
       abort('authentication failed ' + response.body)
-    end # end of if
-  end # end of authenticate
-end # end of class
+    end
+  end
+end

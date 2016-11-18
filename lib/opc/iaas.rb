@@ -29,4 +29,7 @@ class Iaas < OPC
   require 'opc/iaas/imagelist'
   require 'opc/iaas/machineimage'
   require 'opc/iaas/secapplication'
+  require 'opc/iaas/ssh_key'
+  require 'opc/account_helpers'
+  require 'opc/iaas/network'
 end

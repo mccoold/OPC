@@ -17,5 +17,4 @@ class Jcs < Paas
   require 'opc/paas/jcs/jaasmanager'
   require 'opc/paas/jcs/backupmanager'
   require 'opc/paas/jcs/datagrid'
-  
 end

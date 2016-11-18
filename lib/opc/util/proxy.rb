@@ -15,7 +15,7 @@ class Proxy < Util
              else
                @proxy_addr = nil
                @proxy_port = nil
-             end # end of windows if
+             end
            when /darwin|mac os/
              :macosx
            when /linux/
@@ -28,7 +28,7 @@ class Proxy < Util
              else
                @proxy_addr = nil
                @proxy_port = nil
-             end # end of linux if
+             end
            when /solaris|bsd/
              fpath = ENV['HOME']
              if File.exist?("#{fpath}" + '/opcclientcfg.conf')
@@ -38,13 +38,15 @@ class Proxy < Util
              else
                @proxy_addr = nil
                @proxy_port = nil
-             end # end of unix if
+             end
            else
              fail Error::WebDriverError, "unknown os: #{host_os.inspect}"
-           end # end of case
+           end
           )
           
     return @proxy_addr, @proxy_port
-  end # end of method
+  end
+  
   attr_reader :cfgfile
+  
 end

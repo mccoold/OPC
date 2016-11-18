@@ -14,19 +14,20 @@
 # limitations under the License.
 #
 class SecIPList < Iaas
+  require 'opc/account_helpers'
+  include NimbulaAttr
+  
   def initialize(id_domain, user, passwd)
-    @id_domain = id_domain
-    @user = user
-    @passwd = passwd
+    @options = options
     proxy = Proxy.new
     proxy = proxy.proxy
     @proxy_addr = proxy.at(0)
     @proxy_port = proxy.at(1)
   end
   
-  def list(restendpoint, container, action) # rubocop:disable Metrics/AbcSize
+  def list(action) # rubocop:disable Metrics/AbcSize
     authcookie = ComputeBase.new
-    authcookie = authcookie.authenticate(@id_domain, @user, @passwd, restendpoint)
+    authcookie = authcookie.authenticate(id_domain, user, passwd, restendpoint)
     url = restendpoint + '/seciplist' + container
     uri = URI.parse(url)
     http = Net::HTTP.new(uri.host, uri.port, @proxy_addr, @proxy_port)   # Creates a http object
@@ -37,9 +38,10 @@ class SecIPList < Iaas
     request.add_field 'accept', 'application/oracle-compute-v3+directory+json' if action == 'discover'
     request.add_field 'Cookie', authcookie
     http.request(request)
-  end # end or method
+  end
 
-  def discover(restendpoint, container, action) # rubocop:disable Metrics/AbcSize
+  # same as list method, method to be depricated in next release
+  def discover(action) # rubocop:disable Metrics/AbcSize
     authcookie = ComputeBase.new
     authcookie = authcookie.authenticate(@id_domain, @user, @passwd, restendpoint)
     url = restendpoint + '/seciplist' + container
@@ -52,13 +54,15 @@ class SecIPList < Iaas
     request.add_field 'accept', 'application/oracle-compute-v3+directory+json' if action == 'list'
     request.add_field 'Cookie', authcookie
     http.request(request)
-  end # end or method
-
-  def update(restendpoint, seciplist, action, *data) # rubocop:disable Metrics/AbcSize
-    data_hash = data.at(0)
+  end
+  
+  attr_writer :create_data
+  
+  # method to create, delete, or update security iplists in nimbula
+  def update(action) # rubocop:disable Metrics/AbcSize
     authcookie = ComputeBase.new
     authcookie = authcookie.authenticate(@id_domain, @user, @passwd, restendpoint)
-    url = restendpoint + '/seciplist' + seciplist if action == 'update' || action == 'delete'
+    url = restendpoint + '/seciplist' + container if action == 'update' || action == 'delete'
     url = restendpoint + '/seciplist/' if action == 'create'
     uri = URI.parse(url)
     http = Net::HTTP.new(uri.host, uri.port, @proxy_addr, @proxy_port)   # Creates a http object
@@ -70,7 +74,7 @@ class SecIPList < Iaas
     request.add_field 'Content-type', 'application/oracle-compute-v3+json'
     request.add_field 'accept', 'application/oracle-compute-v3+json'
     request.add_field 'Cookie', authcookie
-    return http.request(request, data_hash.to_json) unless action == 'delete'
+    return http.request(request, @create_data.to_json) unless action == 'delete'
     return http.request(request) if action == 'delete'
-  end # end or method
+  end
 end

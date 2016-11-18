@@ -13,7 +13,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-class BlockStorage < Iaas
+class NimbulaNetwork < Iaas
   require 'opc/account_helpers'
   include NimbulaAttr
   
@@ -23,22 +23,23 @@ class BlockStorage < Iaas
     proxy = proxy.proxy
     @proxy_addr = proxy.at(0)
     @proxy_port = proxy.at(1)
-    @function = 'storage'
+  end
+  
+  attr_writer :options, :function
+  
+  def container
+    container = @options[:container]
   end
 
-attr_writer :function, :create_parms, :options
-
-  def list(action) # rubocop:disable Metrics/AbcSize
+  def list # rubocop:disable Metrics/AbcSize
     authcookie = ComputeBase.new
     authcookie = authcookie.authenticate(id_domain, user, passwd, restendpoint)
-    url = @restendpoint + '/storage/volume' + container unless @function == 'volume_snapshot'
-    url = @restendpoint + '/storage/snapshot' + container if @function == 'volume_snapshot'
+    url = restendpoint + '/network/v1/ipnetwork' + container
     uri = URI.parse(url)
     http = Net::HTTP.new(uri.host, uri.port, @proxy_addr, @proxy_port)   # Creates a http object
     http.use_ssl = true    # When using https
     http.verify_mode = OpenSSL::SSL::VERIFY_NONE
     request = Net::HTTP::Get.new(uri.request_uri)
-    action = action.downcase
     request.add_field 'accept', 'application/oracle-compute-v3+json' if action == 'details'
     request.add_field 'accept', 'application/oracle-compute-v3+directory+json' if action == 'list'
     request.add_field 'Cookie', authcookie
@@ -46,40 +47,17 @@ attr_writer :function, :create_parms, :options
   end # end or method
 
   def update(action) # rubocop:disable Metrics/AbcSize
-    #  create compute auth cookie
+    data_hash = data.at(0)
     authcookie = ComputeBase.new
     authcookie = authcookie.authenticate(id_domain, user, passwd, restendpoint)
-    # updating the url end point depending on the function
-    url = restendpoint + '/storage/volume/' if @function == 'storage' && action == 'create'
-    url = restendpoint + '/storage/volume' + container if @function == 'storage' && action == 'delete'
-    url = restendpoint + '/storage/volume' + container if @function == 'storage' && action == 'update'
-    url = restendpoint + '/storage/snapshot/' if @function == 'volume_snapshot'
+    url = restendpoint + '/secassociation/'  if action == 'create'
+    url = restendpoint + '/secassociation' + secassociation if action == 'delete'
     uri = URI.parse(url)
     http = Net::HTTP.new(uri.host, uri.port, @proxy_addr, @proxy_port)   # Creates a http object
     http.use_ssl = true    # When using https
     http.verify_mode = OpenSSL::SSL::VERIFY_NONE
     request = Net::HTTP::Post.new(uri.request_uri) if action == 'create'
-    request = Net::HTTP::Put.new(uri.request_uri) if action == 'update'
     request = Net::HTTP::Delete.new(uri.request_uri) if action == 'delete'
-    request.add_field 'Content-type', 'application/oracle-compute-v3+json'
-    request.add_field 'accept', 'application/oracle-compute-v3+json'
-    request.add_field 'Cookie', authcookie
-    return http.request(request, @create_parms.to_json) unless action == 'delete'
-    return http.request(request) if action == 'delete'
-  end # end or method
-
-  def attach(action) # rubocop:disable Metrics/AbcSize
-    data_hash = data.at(0)
-    #  create compute auth cookie
-    authcookie = ComputeBase.new
-    authcookie = authcookie.authenticate(id_domain, user, passwd, restendpoint)
-    url = restendpoint + '/storage/attachment/'
-    uri = URI.parse(url)
-    http = Net::HTTP.new(uri.host, uri.port, @proxy_addr, @proxy_port)   # Creates a http object
-    http.use_ssl = true    # When using https
-    http.verify_mode = OpenSSL::SSL::VERIFY_NONE
-    request = Net::HTTP::Post.new(uri.request_uri) if action == 'attach'
-    request = Net::HTTP::Delete.new(uri.request_uri) if action == 'detach'
     request.add_field 'Content-type', 'application/oracle-compute-v3+json'
     request.add_field 'accept', 'application/oracle-compute-v3+json'
     request.add_field 'Cookie', authcookie

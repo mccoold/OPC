@@ -14,35 +14,21 @@
 # limitations under the License.
 #
 class SecList < Iaas
+  require 'opc/account_helpers'
+  include NimbulaAttr
+  
   def initialize(id_domain, user, passwd) # rubocop:disable Metrics/AbcSize
-    @id_domain = id_domain
-    @user = user
-    @passwd = passwd
+    @options = options
     proxy = Proxy.new
     proxy = proxy.proxy
     @proxy_addr = proxy.at(0)
     @proxy_port = proxy.at(1)
   end
 
-  def list(restendpoint, container, action) # rubocop:disable Metrics/AbcSize
+  def list(action) # rubocop:disable Metrics/AbcSize
     authcookie = ComputeBase.new
-    authcookie = authcookie.authenticate(@id_domain, @user, @passwd, restendpoint)
+    authcookie = authcookie.authenticate(id_domain, user, passwd, restendpoint)
     url = restendpoint + '/seclist' + container
-    uri = URI.parse(url)
-    http = Net::HTTP.new(uri.host, uri.port, @proxy_addr, @proxy_port)   # Creates a http object
-    http.use_ssl = true    # When using https
-    http.verify_mode = OpenSSL::SSL::VERIFY_NONE
-    request = Net::HTTP::Get.new(uri.request_uri)
-    request.add_field 'accept', 'application/oracle-compute-v3+json' if action == 'details'
-    request.add_field 'accept', 'application/oracle-compute-v3+directory+json' if action == 'discover'
-    request.add_field 'Cookie', authcookie
-    http.request(request)
-  end # end or method
-
-  def discover(restendpoint, container, action) # rubocop:disable Metrics/AbcSize
-    authcookie = ComputeBase.new
-    authcookie = authcookie.authenticate(@id_domain, @user, @passwd, restendpoint)
-    url = restendpoint + '/seclist/Compute-' + @id_domain + container
     uri = URI.parse(url)
     http = Net::HTTP.new(uri.host, uri.port, @proxy_addr, @proxy_port)   # Creates a http object
     http.use_ssl = true    # When using https
@@ -52,13 +38,15 @@ class SecList < Iaas
     request.add_field 'accept', 'application/oracle-compute-v3+directory+json' if action == 'list'
     request.add_field 'Cookie', authcookie
     http.request(request)
-  end # end or method
+  end
+  
+  attr_writer :create_data
 
-  def update(restendpoint, seclist, action, *data) # rubocop:disable Metrics/AbcSize
-    data_hash = data.at(0)
+  # method to create, delete security seclists in nimbula
+  def update(action) # rubocop:disable Metrics/AbcSize
     authcookie = ComputeBase.new
-    authcookie = authcookie.authenticate(@id_domain, @user, @passwd, restendpoint)
-    url = restendpoint + '/seclist' + seclist if action == 'update' || action == 'delete'
+    authcookie = authcookie.authenticate(id_domain, user, passwd, restendpoint)
+    url = restendpoint + '/seclist' + container if action == 'update' || action == 'delete'
     url = restendpoint + '/seclist/' if action == 'create'
     uri = URI.parse(url)
     http = Net::HTTP.new(uri.host, uri.port, @proxy_addr, @proxy_port)   # Creates a http object
@@ -70,7 +58,7 @@ class SecList < Iaas
     request.add_field 'Content-type', 'application/oracle-compute-v3+json'
     request.add_field 'accept', 'application/oracle-compute-v3+json'
     request.add_field 'Cookie', authcookie
-    return  http.request(request, data_hash.to_json) unless action == 'delete'
+    return  http.request(request, @create_data.to_json) unless action == 'delete'
     return  http.request(request) if action == 'delete'
   end # end or method
 end

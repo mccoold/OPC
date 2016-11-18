@@ -58,8 +58,8 @@ class ObjectStorage < Iaas
       request = Net::HTTP::Put.new(uri.request_uri)
       request.add_field 'X-Auth-Token', "#{stgtkn}"
       http.request(request)
-    end # end of if
-  end  # end of method
+    end
+  end
 
   def list # rubocop:disable Metrics/AbcSize
     tokens = build_token
@@ -76,8 +76,8 @@ class ObjectStorage < Iaas
       request = Net::HTTP::Get.new(uri.request_uri)
       request.add_field 'X-Auth-Token', "#{stgtkn}"
       http.request(request)
-    end # end of if
-  end  # end of method
+    end
+  end
 
   def contents(container) # rubocop:disable Metrics/AbcSize
     tokens = build_token
@@ -95,8 +95,7 @@ class ObjectStorage < Iaas
       request.add_field 'X-Auth-Token', "#{stgtkn}"
       http.request(request)
     end
-    # end of if
-  end  # end of method
+  end
 
   def delete(container) # rubocop:disable Metrics/AbcSize
     tokens = build_token
@@ -113,8 +112,8 @@ class ObjectStorage < Iaas
       request = Net::HTTP::Delete.new(uri.request_uri)
       request.add_field 'X-Auth-Token', "#{stgtkn}"
       http.request(request)
-    end # end of if
-  end  # end of method
+    end
+  end
 
   def delete_content(container, object) # rubocop:disable Metrics/AbcSize
     tokens = build_token
@@ -131,6 +130,6 @@ class ObjectStorage < Iaas
       request = Net::HTTP::Delete.new(uri.request_uri)
       request.add_field 'X-Auth-Token', "#{stgtkn}"
       http.request(request)
-    end # end of if
-  end  # end of method
-end # end of class
+    end
+  end
+end

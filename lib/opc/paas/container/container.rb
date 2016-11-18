@@ -50,7 +50,7 @@ class Container < Paas
     request.add_field 'X-ID-TENANT-NAME', @id_domain
     request.add_field 'Content-Type', 'multipart/form-data' 
     http.request(request, @application_file, @manifest, @deployment_file)
-  end   # end method create
+  end
   
   def delete(inst_id) # rubocop:disable Metrics/AbcSize
     uri = uri_handleruri_handler
@@ -61,7 +61,7 @@ class Container < Paas
     request.basic_auth @user, @passwd
     request.add_field 'X-ID-TENANT-NAME', @id_domain
     http.request(request)
-  end # end of method delete
+  end
   
   def list
     uri = uri_handler
@@ -72,5 +72,5 @@ class Container < Paas
     request.basic_auth @user, @passwd
     request.add_field 'X-ID-TENANT-NAME', @id_domain
     http.request(request)
-  end   # end method create
+  end
 end    

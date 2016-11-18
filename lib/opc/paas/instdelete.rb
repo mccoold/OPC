@@ -30,19 +30,20 @@ class InstDelete < Paas
 
   attr_writer :url
 
+  # delete method for jcs, soa, dbcs
   def delete(data, inst_id) # rubocop:disable Metrics/AbcSize
     uri = URI.parse(@url + "/#{inst_id}")
     http = Net::HTTP.new(uri.host, uri.port, @proxy_addr, @proxy_port)
     http.use_ssl = true
     http.verify_mode = OpenSSL::SSL::VERIFY_NONE
     request = Net::HTTP::Delete.new(uri.request_uri) if @service == 'dbcs'
-    request = Net::HTTP::Put.new(uri.request_uri) if @service == 'jcs'
+    request = Net::HTTP::Put.new(uri.request_uri) if @service == 'jcs' || @service == 'soa'
     request.basic_auth @user, @passwd
     request.add_field 'X-ID-TENANT-NAME', @id_domain
     request.add_field 'Content-Type', 'application/vnd.com.oracle.oracloud.provisioning.Service+json' if @service == 'jcs'
-    request.add_field 'Content-Type', 'application/json' if @service == 'dbcs'
-    response =  http.request(request, data.to_json) if @service == 'jcs'
-    response =  http.request(request) if @service == 'dbcs' || @service == 'soa'
+    request.add_field 'Content-Type', 'application/json' if @service == 'dbcs' || @service == 'soa'
+    response =  http.request(request, data.to_json) if @service == 'jcs' || @service == 'soa'
+    response =  http.request(request) if @service == 'dbcs' 
     return response
-  end # end of method delete
-end   # end of class
+  end
+end

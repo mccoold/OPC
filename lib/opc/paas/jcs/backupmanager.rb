@@ -27,8 +27,8 @@ class BackUpManager < Jcs
 
   attr_writer :url
 
+  # list all instances in an account
   def config_list(inst_id) # rubocop:disable Metrics/AbcSize
-    # list all instances in an account
     uri = URI.parse(@url + "/#{inst_id}/backupconfig")
     http = Net::HTTP.new(uri.host, uri.port, @proxy_addr, @proxy_port)
     http.use_ssl = true
@@ -37,10 +37,10 @@ class BackUpManager < Jcs
     request.basic_auth @user, @passwd
     request.add_field 'X-ID-TENANT-NAME', @id_domain
     http.request(request)
-  end # end method backuplist
+  end
 
+  # updates config
   def config(data, inst_id) # rubocop:disable Metrics/AbcSize
-    # updates config
     uri = URI.parse(@url + @id_domain + "/#{inst_id}/backupconfig")
     http = Net::HTTP.new(uri.host, uri.port, @proxy_addr, @proxy_port)
     http.use_ssl = true
@@ -50,10 +50,10 @@ class BackUpManager < Jcs
     request.add_field 'X-ID-TENANT-NAME', @id_domain
     request.add_field 'Content-type', 'application/json'
     http.request(request, data.to_json)
-  end # end method backuplist
+  end
 
+  # starts a new backup on the server
   def initialize_backup(data, inst_id) # rubocop:disable Metrics/AbcSize
-    # list all instances in an account
     uri = URI.parse(@url + @id_domain + "/#{inst_id}/backups")
     http = Net::HTTP.new(uri.host, uri.port, @proxy_addr, @proxy_port)
     http.use_ssl = true
@@ -63,15 +63,16 @@ class BackUpManager < Jcs
     request.add_field 'X-ID-TENANT-NAME', @id_domain
     request.add_field 'Content-type', 'application/json'
     http.request(request, data.to_json)
-  end # end method initialize
+  end
 
+  # list all backups in an account
   def list(inst_id, backup_id) # rubocop:disable Metrics/AbcSize
-    # list all backups in an account
+    
     if !backup_id.nil?
       uri = URI.parse(@url + "/#{inst_id}/backups/#{backup_id}")
     else
       uri = URI.parse(@url + "/#{inst_id}/backups")
-    end # end of if
+    end
     http = Net::HTTP.new(uri.host, uri.port, @proxy_addr, @proxy_port)
     http.use_ssl = true
     http.verify_mode = OpenSSL::SSL::VERIFY_NONE
@@ -80,8 +81,9 @@ class BackUpManager < Jcs
     request.add_field 'X-ID-TENANT-NAME', @id_domain
     request.add_field 'Content-type', 'application/json'
     http.request(request)
-  end # end method backup list
+  end
 
+  # deletes backups
   def delete(inst_id, backup_id)
     uri = URI.parse(@url + "/#{inst_id}/backups/#{backup_id}")
     http = Net::HTTP.new(uri.host, uri.port, @proxy_addr, @proxy_port)
@@ -92,5 +94,5 @@ class BackUpManager < Jcs
     request.add_field 'X-ID-TENANT-NAME', @id_domain
     request.add_field 'Content-type:application/json'
     http.request(request)
-  end # end method initialize
+  end
 end

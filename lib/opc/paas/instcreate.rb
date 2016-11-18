@@ -33,6 +33,7 @@ class InstCreate < Paas
 
   attr_writer :url, :service
 
+  # method used to create dbcs, jcs, and soa instances
   def create(create_data) # rubocop:disable Metrics/AbcSize
     uri = URI.parse(@url)
     http = Net::HTTP.new(uri.host, uri.port, @proxy_addr, @proxy_port) # Creates a http object
@@ -44,8 +45,9 @@ class InstCreate < Paas
     request.add_field 'Content-Type', 'application/vnd.com.oracle.oracloud.provisioning.Service+json' if @service == 'jcs'
     request.add_field 'Content-Type', 'application/json' if @service == 'dbcs' || @service == 'soa'
     http.request(request, create_data.to_json)
-  end   # end method create
+  end
 
+  # method used to track the status of an instance creation for jcs, soa, dbcs
   def create_status(url)
     uri = URI.parse(url)
     http = Net::HTTP.new(uri.host, uri.port, @proxy_addr, @proxy_port)
@@ -56,4 +58,4 @@ class InstCreate < Paas
     request.add_field 'X-ID-TENANT-NAME', @id_domain
     http.request(request)
   end
-end   # end of class
+end

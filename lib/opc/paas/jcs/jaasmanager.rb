@@ -42,7 +42,7 @@ class JaasManager < Jcs
     request.add_field 'Content-Type', 'application/vnd.com.oracle.oracloud.provisioning.Service+json'
     request.add_field 'X-ID-TENANT-NAME', @id_domain
     http.request(request, config.to_json)
-  end   # end method stop
+  end
 
   def scale_up(inst_id, cluster_id) # rubocop:disable Metrics/AbcSize
     url = @url + @id_domain + '/' + inst_id + '/servers/' + cluster_id + '?createCluserIfMissing=true' unless @update_json
@@ -58,7 +58,7 @@ class JaasManager < Jcs
     request.add_field 'Content-Type', 'application/json' if @update_json
     return http.request(request) unless @update_json
     return http.request(request, @update_json.to_json) if @update_json
-  end # end of method
+  end
 
   def scale_in(inst_id, server_id)
     url = @url + @id_domain + "/#{inst_id}/servers/#{server_id}"
@@ -70,7 +70,7 @@ class JaasManager < Jcs
     request.basic_auth @user, @passwd
     request.add_field 'X-ID-TENANT-NAME', @id_domain
     http.request(request)
-  end  # end of method
+  end
 
   def patch_precheck(inst_id, patch_id)
     url = @url + @id_domain + "/#{inst_id}/patches/checks/#{patch_id}"
@@ -82,7 +82,7 @@ class JaasManager < Jcs
     request.basic_auth @user, @passwd
     request.add_field 'X-ID-TENANT-NAME', @id_domain
     http.request(request)
-  end # end of method
+  end
 
   def patch(inst_id, patch_id)
     url = @url + @id_domain + "/#{inst_id}/patches/#{patch_id}"
@@ -94,7 +94,7 @@ class JaasManager < Jcs
     request.basic_auth @user, @passwd
     request.add_field 'X-ID-TENANT-NAME', @id_domain
     http.request(request)
-  end # end of method
+  end
 
   def patch_rollback(inst_id, rollback_id)
     url = @url + @id_domain + "/#{inst_id}/patches/#{rollback_id}/rollback"
@@ -106,7 +106,7 @@ class JaasManager < Jcs
     request.basic_auth @user, @passwd
     request.add_field 'X-ID-TENANT-NAME', @id_domain
     http.request(request)
-  end # end of method
+  end
 
   def applied_patches(inst_id)
     url = @url + @id_domain + "/#{inst_id}/patches/applied"
@@ -118,7 +118,7 @@ class JaasManager < Jcs
     request.basic_auth @user, @passwd
     request.add_field 'X-ID-TENANT-NAME', @id_domain
     http.request(request)
-  end # end of method
+  end
 
   def available_patches(inst_id)
     url = @url + @id_domain + "/#{inst_id}/patches/available"
@@ -130,5 +130,5 @@ class JaasManager < Jcs
     request.basic_auth @user, @passwd
     request.add_field 'X-ID-TENANT-NAME', @id_domain
     http.request(request)
-  end # end of method
-end # end of class
+  end
+end

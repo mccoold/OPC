@@ -36,8 +36,9 @@ class DbaasManager < Dbcs
     request.add_field 'X-ID-TENANT-NAME', @id_domain
     request.add_field 'Content-Type', 'application/json'
     http.request(request, data.to_json)
-  end # end of method scale up
+  end
 
+  # turns an instance on and off
   def power(inst_id, action) # rubocop:disable Metrics/AbcSize
     config = {
       'lifecycleState'   => "#{action}"
@@ -52,5 +53,5 @@ class DbaasManager < Dbcs
     request.add_field 'Content-Type', 'application/json'
     request.add_field 'X-ID-TENANT-NAME', @id_domain
     http.request(request, config.to_json)
-  end   # end method power
-end   # end of class
+  end
+end

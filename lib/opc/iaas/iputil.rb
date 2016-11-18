@@ -39,7 +39,7 @@ class IPUtil < Iaas
     request.add_field 'accept', 'application/oracle-compute-v3+directory+json' if action == 'list'
     request.add_field 'Cookie', authcookie
     http.request(request)
-  end # end or method
+  end
 
   def discover(container, qparam, qvalue, function) # rubocop:disable Metrics/AbcSize
     authcookie = ComputeBase.new
@@ -53,7 +53,7 @@ class IPUtil < Iaas
     request.add_field 'accept', 'application/oracle-compute-v3+json'
     request.add_field 'Cookie', authcookie
     http.request(request)
-  end # end or method
+  end
 
   def update(action, function) # rubocop:disable Metrics/AbcSize
     authcookie = ComputeBase.new
@@ -72,5 +72,5 @@ class IPUtil < Iaas
     request.add_field 'Cookie', authcookie
     return  http.request(request, @create_json.to_json) unless action == 'delete'
     return  http.request(request) if action == 'delete'
-  end # end or method
+  end
 end
