@@ -26,6 +26,9 @@ class IPUtil < Iaas
   end
 
   attr_writer :create_json, :ipcontainer_name
+
+  # lists IP functions
+  # returns a http response object
   def list(container, action, function) # rubocop:disable Metrics/AbcSize
     authcookie = ComputeBase.new
     authcookie = authcookie.authenticate(@id_domain, @user, @passwd, @restendpoint)
@@ -41,6 +44,8 @@ class IPUtil < Iaas
     http.request(request)
   end
 
+  # this is used to get reservations and external IP's, call by ip_list in the instance class
+  # returns a http response object
   def discover(container, qparam, qvalue, function) # rubocop:disable Metrics/AbcSize
     authcookie = ComputeBase.new
     authcookie = authcookie.authenticate(@id_domain, @user, @passwd, @restendpoint)
@@ -55,6 +60,8 @@ class IPUtil < Iaas
     http.request(request)
   end
 
+  # creates new ip reservations and associations
+  # returns a http response object
   def update(action, function) # rubocop:disable Metrics/AbcSize
     authcookie = ComputeBase.new
     authcookie = authcookie.authenticate(@id_domain, @user, @passwd, @restendpoint)

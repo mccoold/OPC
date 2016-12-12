@@ -28,6 +28,8 @@ class BlockStorage < Iaas
 
 attr_writer :function, :create_parms, :options
 
+  # list method for Nimbula Block Storage
+  # returns a http response object
   def list(action) # rubocop:disable Metrics/AbcSize
     authcookie = ComputeBase.new
     authcookie = authcookie.authenticate(id_domain, user, passwd, restendpoint)
@@ -45,6 +47,8 @@ attr_writer :function, :create_parms, :options
     http.request(request)
   end # end or method
 
+  # create, update, and delete functionality for Nimbuila block storage
+  # returns a http response object
   def update(action) # rubocop:disable Metrics/AbcSize
     #  create compute auth cookie
     authcookie = ComputeBase.new
@@ -68,6 +72,8 @@ attr_writer :function, :create_parms, :options
     return http.request(request) if action == 'delete'
   end # end or method
 
+  # attaches a nimbula storage object to an instance
+  # returns a http response object
   def attach(action) # rubocop:disable Metrics/AbcSize
     data_hash = data.at(0)
     #  create compute auth cookie

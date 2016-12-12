@@ -34,6 +34,7 @@ class InstCreate < Paas
   attr_writer :url, :service
 
   # method used to create dbcs, jcs, and soa instances
+  # returns a http response object
   def create(create_data) # rubocop:disable Metrics/AbcSize
     uri = URI.parse(@url)
     http = Net::HTTP.new(uri.host, uri.port, @proxy_addr, @proxy_port) # Creates a http object
@@ -48,6 +49,7 @@ class InstCreate < Paas
   end
 
   # method used to track the status of an instance creation for jcs, soa, dbcs
+  # returns a http response object
   def create_status(url)
     uri = URI.parse(url)
     http = Net::HTTP.new(uri.host, uri.port, @proxy_addr, @proxy_port)

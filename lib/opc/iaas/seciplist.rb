@@ -24,7 +24,8 @@ class SecIPList < Iaas
     @proxy_addr = proxy.at(0)
     @proxy_port = proxy.at(1)
   end
-  
+
+  # returns a http response object
   def list(action) # rubocop:disable Metrics/AbcSize
     authcookie = ComputeBase.new
     authcookie = authcookie.authenticate(id_domain, user, passwd, restendpoint)
@@ -41,6 +42,7 @@ class SecIPList < Iaas
   end
 
   # same as list method, method to be depricated in next release
+  # returns a http response object
   def discover(action) # rubocop:disable Metrics/AbcSize
     authcookie = ComputeBase.new
     authcookie = authcookie.authenticate(@id_domain, @user, @passwd, restendpoint)
@@ -59,6 +61,7 @@ class SecIPList < Iaas
   attr_writer :create_data
   
   # method to create, delete, or update security iplists in nimbula
+  # returns a http response object
   def update(action) # rubocop:disable Metrics/AbcSize
     authcookie = ComputeBase.new
     authcookie = authcookie.authenticate(@id_domain, @user, @passwd, restendpoint)

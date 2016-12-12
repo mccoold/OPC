@@ -24,6 +24,9 @@ class SecApp < Iaas
     @proxy_port = proxy.at(1)
   end
 
+  # discovers all the Security applications in a Nimbula container
+  # returns a http response object
+  # this method will be depricated, use list
   def discover(restendpoint, container) # rubocop:disable Metrics/AbcSize
     authcookie = ComputeBase.new
     authcookie = authcookie.authenticate(@id_domain, @user, @passwd, restendpoint)
@@ -38,6 +41,8 @@ class SecApp < Iaas
     http.request(request)
   end
 
+  # gives details on a security application
+  # returns a http response object
   def list(restendpoint, secapp) # rubocop:disable Metrics/AbcSize
     authcookie = ComputeBase.new
     authcookie = authcookie.authenticate(@id_domain, @user, @passwd, restendpoint)
@@ -52,6 +57,8 @@ class SecApp < Iaas
     http.request(request)
   end
 
+  # create, delete a security application
+  # returns a http response object
   def modify(restendpoint, action, *data) # rubocop:disable Metrics/AbcSize
     data_hash = data.at(0) if data.is_a?(Array)
     data_hash = data if data.is_a?(String)  # this tests if there are extra [] in the JSON

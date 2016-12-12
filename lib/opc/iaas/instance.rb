@@ -30,6 +30,7 @@ attr_writer :function, :machine_image, :options
 
   # Gets a list of all the instances in the specified container.
   # You can limit the list by specifying an instance name and details as the action
+  # returns a http response object
   def list # rubocop:disable Metrics/AbcSize
     authcookie = ComputeBase.new
     authcookie = authcookie.authenticate(id_domain, user, passwd, restendpoint)
@@ -46,6 +47,7 @@ attr_writer :function, :machine_image, :options
   end
 
   # deletes instances
+  # returns a http response object
   def delete(instance) # rubocop:disable Metrics/AbcSize
     authcookie = ComputeBase.new
     authcookie = authcookie.authenticate(id_domain, user, passwd, restendpoint)
@@ -61,6 +63,7 @@ attr_writer :function, :machine_image, :options
   end
   
   # creates instance snap shot of instances with ephemeral disk allocated(only)
+  # returns a http response object
   def create_snap # rubocop:disable Metrics/AbcSize
     authcookie = ComputeBase.new
     authcookie = authcookie.authenticate(id_domain, user, passwd, restendpoint)
@@ -81,17 +84,18 @@ attr_writer :function, :machine_image, :options
   end
 
   # gets the public and private IP's for instances in compute
-  def list_ip(container) # rubocop:disable Metrics/AbcSize
+  # returns an array of IP addresses
+  def list_ip(containers) # rubocop:disable Metrics/AbcSize
+    @options[:container] = containers
+    container
     instance_data = list.body
     instance_data = JSON.parse(instance_data)
-    instance_data = instance_data['result']
-    instance_data = instance_data.at(0)
     vcableid = instance_data['vcable_id']
     abort('Error network configuration is not present') if vcableid.nil?
     internalip = instance_data['ip']
     iputil = IPUtil.new(id_domain, user, passwd, restendpoint)
-    basecontainer = container.split('/')
-    usercontainer = '/' + basecontainer[1] + '/' + basecontainer[2] + '/'
+    basecontainer = containers.split('/')
+    usercontainer = '/' + basecontainer[1] + '/' + basecontainer[2] + '/' 
     vcabledetails = JSON.parse(iputil.discover(usercontainer, 'vcable', vcableid, 'association').body)
     vcabledetails = vcabledetails['result']
     vcabledetails = vcabledetails.at(0)

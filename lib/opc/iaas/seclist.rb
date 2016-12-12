@@ -17,7 +17,7 @@ class SecList < Iaas
   require 'opc/account_helpers'
   include NimbulaAttr
   
-  def initialize(id_domain, user, passwd) # rubocop:disable Metrics/AbcSize
+  def initialize(options) # rubocop:disable Metrics/AbcSize
     @options = options
     proxy = Proxy.new
     proxy = proxy.proxy
@@ -25,6 +25,7 @@ class SecList < Iaas
     @proxy_port = proxy.at(1)
   end
 
+  # returns a http response object
   def list(action) # rubocop:disable Metrics/AbcSize
     authcookie = ComputeBase.new
     authcookie = authcookie.authenticate(id_domain, user, passwd, restendpoint)
@@ -43,6 +44,7 @@ class SecList < Iaas
   attr_writer :create_data
 
   # method to create, delete security seclists in nimbula
+  # returns a http response object
   def update(action) # rubocop:disable Metrics/AbcSize
     authcookie = ComputeBase.new
     authcookie = authcookie.authenticate(id_domain, user, passwd, restendpoint)

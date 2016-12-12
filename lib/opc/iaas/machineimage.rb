@@ -25,6 +25,8 @@ class MachineImage < Iaas
     @restendpoint = restendpoint
   end
 
+  # lists all the machine images in a container or provides details on one depending on the action parameter
+  # returns a http response object
   def list(container, action) # rubocop:disable Metrics/AbcSize
     authcookie = ComputeBase.new
     authcookie = authcookie.authenticate(@id_domain, @user, @passwd, @restendpoint)
@@ -39,7 +41,9 @@ class MachineImage < Iaas
     request.add_field 'Cookie', authcookie
     http.request(request)
   end
-
+  
+  # creates a machine image
+  # returns a http response object
   def create(create_data) # rubocop:disable Metrics/AbcSize
     authcookie = ComputeBase.new
     authcookie = authcookie.authenticate(@id_domain, @user, @passwd, @restendpoint)

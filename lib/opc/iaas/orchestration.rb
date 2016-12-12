@@ -25,6 +25,8 @@ class Orchestration < Iaas
     @proxy_port = proxy.at(1)
   end
 
+  # the list method for orchestrations
+  # returns a http response object
   def list(action) # rubocop:disable Metrics/AbcSize
     authcookie = ComputeBase.new
     authcookie = authcookie.authenticate(id_domain, user, passwd, restendpoint)
@@ -38,10 +40,12 @@ class Orchestration < Iaas
     request.add_field 'accept', 'application/oracle-compute-v3+directory+json' if action == 'list'
     request.add_field 'Cookie', authcookie
     http.request(request)
-  end # end or method
+  end
 
   attr_writer :create_json, :options
 
+  # This method handles create, delete,  for orchestrations
+  # returns a http response object
   def update(action) # rubocop:disable Metrics/AbcSize
     authcookie = ComputeBase.new
     authcookie = authcookie.authenticate(id_domain, user, passwd, restendpoint)
@@ -61,8 +65,10 @@ class Orchestration < Iaas
     response = http.request(request, @create_json.to_json) unless action == 'delete'
     response = http.request(request) if action == 'delete'
     return response
-  end # end or method
+  end
 
+  # handles start, stop for orchestrations
+  # returns a http response object
   def manage(action) # rubocop:disable Metrics/AbcSize
     authcookie = ComputeBase.new
     authcookie = authcookie.authenticate(id_domain, user, passwd, restendpoint)
@@ -76,5 +82,5 @@ class Orchestration < Iaas
     request.add_field 'accept', 'application/oracle-compute-v3+json'
     request.add_field 'Cookie', authcookie
     http.request(request)
-  end # end or method
+  end
 end

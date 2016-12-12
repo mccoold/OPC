@@ -6,7 +6,7 @@
 creating, deleting, resizing, backups, and datagrid: Java Instances, Database instances, and storage.
 This gem is the API other gems depend on this gem for connectivity
 
-* Version 0.3.0
+* Version 0.4.0
 
 ### Setup and Dependencies ###
 
@@ -16,12 +16,9 @@ This gem is the API other gems depend on this gem for connectivity
 
 * Dependencies
 Ruby 1.8 or higher, RubyGems, Json, net/http
-* How to run tests:
-Install the oracle_public_cloud_client gem, which depends on this gem,  that gem will give you a command line interface into this gem and OPC
 
 ### Class and Method Descriptions ###
 
-See CLASSES_README
 
 ### Repo Owner ###
 

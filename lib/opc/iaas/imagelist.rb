@@ -25,6 +25,8 @@ class ImageList < Iaas
     @restendpoint = restendpoint
   end
 
+  # lists all the imagelists in a container
+  # returns a http response object
   def list(container) # rubocop:disable Metrics/AbcSize
     authcookie = ComputeBase.new
     authcookie = authcookie.authenticate(@id_domain, @user, @passwd, @restendpoint)
@@ -39,6 +41,8 @@ class ImageList < Iaas
     http.request(request)
   end
 
+  # creates a new imagelist
+  # returns a http response object
   def create(create_data) # rubocop:disable Metrics/AbcSize
     authcookie = ComputeBase.new
     authcookie = authcookie.authenticate(@id_domain, @user, @passwd, @restendpoint)

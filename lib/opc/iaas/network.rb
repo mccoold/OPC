@@ -26,11 +26,8 @@ class NimbulaNetwork < Iaas
   end
   
   attr_writer :options, :function
-  
-  def container
-    container = @options[:container]
-  end
 
+  # returns a http response object
   def list # rubocop:disable Metrics/AbcSize
     authcookie = ComputeBase.new
     authcookie = authcookie.authenticate(id_domain, user, passwd, restendpoint)
@@ -44,8 +41,9 @@ class NimbulaNetwork < Iaas
     request.add_field 'accept', 'application/oracle-compute-v3+directory+json' if action == 'list'
     request.add_field 'Cookie', authcookie
     http.request(request)
-  end # end or method
+  end
 
+  # returns a http response object
   def update(action) # rubocop:disable Metrics/AbcSize
     data_hash = data.at(0)
     authcookie = ComputeBase.new
@@ -63,5 +61,5 @@ class NimbulaNetwork < Iaas
     request.add_field 'Cookie', authcookie
     return http.request(request, data_hash.to_json) unless action == 'delete'
     return http.request(request) if action == 'delete'
-  end # end or method
+  end
 end

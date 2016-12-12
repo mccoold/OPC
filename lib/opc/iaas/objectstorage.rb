@@ -27,6 +27,7 @@ class ObjectStorage < Iaas
 
   attr_writer :url
 
+  # creates storage service token
   def build_token # rubocop:disable Metrics/AbcSize
     uri = URI.parse(@url)
     http = Net::HTTP.new(uri.host, uri.port, @proxy_addr, @proxy_port)   # Creates a http object
@@ -40,9 +41,10 @@ class ObjectStorage < Iaas
       return response['X-Storage-Url'], response['X-Auth-Token']
     else
       response
-    end # end of if
-  end # end of method
+    end
+  end
 
+  # creates new containers in object storage
   def create(container) # rubocop:disable Metrics/AbcSize
     tokens = build_token
     if !tokens.is_a?(Array)
@@ -61,13 +63,13 @@ class ObjectStorage < Iaas
     end
   end
 
+  # lists object storage containers or their contents
   def list # rubocop:disable Metrics/AbcSize
     tokens = build_token
     if !tokens.is_a?(Array)
       return tokens
     else
       stgurl = tokens.at(0)
-      stgurl =  "#{stgurl}"
       stgtkn = tokens.at(1)
       uri = URI.parse(stgurl)
       http = Net::HTTP.new(uri.host, uri.port, @proxy_addr, @proxy_port)   # Creates a http object
@@ -79,6 +81,7 @@ class ObjectStorage < Iaas
     end
   end
 
+  # lists the contents of container
   def contents(container) # rubocop:disable Metrics/AbcSize
     tokens = build_token
     if !tokens.is_a?(Array)
@@ -97,6 +100,7 @@ class ObjectStorage < Iaas
     end
   end
 
+  # deletes a container
   def delete(container) # rubocop:disable Metrics/AbcSize
     tokens = build_token
     if !tokens.is_a?(Array)
@@ -115,6 +119,7 @@ class ObjectStorage < Iaas
     end
   end
 
+  # deletes the content of the container
   def delete_content(container, object) # rubocop:disable Metrics/AbcSize
     tokens = build_token
     if !tokens.is_a?(Array)
